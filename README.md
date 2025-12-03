@@ -7,6 +7,7 @@ Data sonification platform. Transform datasets into music.
 - **/** - Portal
 - **/pulse** - Synthetic data as ambient soundscape
 - **/iris** - Fisher's 1936 iris dataset as composition
+- **/spectrum** - FFT-based spectral sonification revealing hidden frequencies
 - **/about** - Philosophy
 
 ## Stack

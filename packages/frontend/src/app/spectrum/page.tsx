@@ -265,6 +265,9 @@ export default function SpectrumPage() {
         <h1 className="text-5xl font-light text-white/90 mb-2 tracking-wide">
           Spectral Sonification
         </h1>
+        <p className="text-indigo-400/60 text-sm font-mono mb-6 tracking-wider">
+          Hidden cycles revealed
+        </p>
 
         <p className="text-indigo-300/70 mb-8 text-center max-w-2xl leading-relaxed">
           Fourier transform reveals hidden frequencies. Hear the cycles within your data.
@@ -399,14 +402,14 @@ export default function SpectrumPage() {
             <button
               onClick={analyzeSpectrum}
               disabled={loading}
-              className="flex-1 px-8 py-3 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 hover:from-indigo-600/30 hover:to-purple-600/30 text-white rounded-lg transition-all duration-300 border border-white/20 shadow-lg disabled:opacity-50"
+              className="flex-1 px-6 py-3 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 hover:from-indigo-600/30 hover:to-purple-600/30 text-white rounded-lg transition-all duration-300 border border-white/20 shadow-lg disabled:opacity-50"
             >
               {loading ? 'Analyzing...' : '🔬 Analyze Spectrum'}
             </button>
             <button
               onClick={loadDemo}
               disabled={loading}
-              className="px-8 py-3 bg-white/5 hover:bg-white/10 text-white rounded-lg transition-all duration-300 border border-white/20 disabled:opacity-50"
+              className="px-6 py-3 bg-white/5 hover:bg-white/10 text-white rounded-lg transition-all duration-300 border border-white/20 disabled:opacity-50"
             >
               📊 Load Demo
             </button>
@@ -429,7 +432,7 @@ export default function SpectrumPage() {
                 ref={canvasRef}
                 width={1200}
                 height={400}
-                className="rounded-xl shadow-2xl border border-indigo-500/20 w-full"
+                className="rounded-xl shadow-2xl border border-purple-800/30 w-full"
                 aria-label="Power spectrum visualization showing frequency content"
                 role="img"
               />
@@ -482,7 +485,7 @@ export default function SpectrumPage() {
             <button
               onClick={playSonification}
               disabled={loading}
-              className="mb-8 px-12 py-3 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 hover:from-indigo-600/30 hover:to-purple-600/30 text-white rounded-lg transition-all duration-300 border border-white/20 shadow-lg text-lg"
+              className="mb-8 px-6 py-3 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 hover:from-indigo-600/30 hover:to-purple-600/30 text-white rounded-lg transition-all duration-300 border border-white/20 shadow-lg text-lg"
             >
               {isPlaying ? '⏹ Stop' : '▶ Play Sonification'}
             </button>
