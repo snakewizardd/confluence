@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { IrisSonifier, IrisWave } from '@/lib/iris-sonify';
 import Navigation from '@/components/Navigation';
+import WaveformVisualizer from '@/components/WaveformVisualizer';
 
 interface IrisData {
   waves: IrisWave[];
@@ -53,6 +54,7 @@ export default function IrisPage() {
     petalLength: false,
     petalWidth: false,
   });
+  const [toneInstance, setToneInstance] = useState<any>(null);
 
   // Load preferences from localStorage on mount
   useEffect(() => {
@@ -287,6 +289,7 @@ export default function IrisPage() {
         setError('Failed to initialize audio');
         return;
       }
+      setToneInstance(sonifierRef.current.getTone());
       setIsInitialized(true);
     }
 
@@ -316,9 +319,9 @@ export default function IrisPage() {
     return (
       <>
         <Navigation />
-        <main className="min-h-screen bg-gradient-to-b from-purple-950 to-black flex items-center justify-center pt-24">
+        <main id="main-content" className="min-h-screen bg-gradient-to-b from-purple-950 to-black flex items-center justify-center pt-24 page-enter">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-purple-400 mx-auto mb-4"></div>
+            <div className="animate-spin loading-pulse rounded-full h-16 w-16 border-t-2 border-b-2 border-purple-400 mx-auto mb-4"></div>
             <p className="text-white/70 text-lg">Loading Iris data from R...</p>
           </div>
         </main>
@@ -393,7 +396,7 @@ export default function IrisPage() {
     return (
       <>
         <Navigation />
-        <main className="min-h-screen bg-gradient-to-b from-purple-950 to-black flex items-center justify-center pt-24">
+        <main id="main-content" className="min-h-screen bg-gradient-to-b from-purple-950 to-black flex items-center justify-center pt-24 page-enter">
           <div className="text-center text-red-400 max-w-lg p-8">
             <h2 className="text-2xl mb-4">Error Loading Data</h2>
             <p className="mb-4">{error}</p>
@@ -425,7 +428,7 @@ export default function IrisPage() {
   return (
     <>
       <Navigation />
-      <main className="min-h-screen bg-gradient-to-b from-purple-950 to-black flex flex-col items-center justify-center p-8 pt-24">
+      <main id="main-content" className="min-h-screen bg-gradient-to-b from-purple-950 to-black flex flex-col items-center justify-center p-8 pt-24 page-enter">
         <h1 className="text-5xl font-light text-white/90 mb-2 tracking-wide">
           Iris Sonification
         </h1>
@@ -458,8 +461,22 @@ export default function IrisPage() {
         ref={canvasRef}
         width={1200}
         height={400}
-        className="rounded-xl shadow-2xl mb-8 border border-purple-500/20"
+        className="rounded-xl shadow-2xl mb-6 border border-purple-500/20"
+        aria-label="Wave visualization of iris dataset showing sinusoidal patterns for each observation"
+        role="img"
       />
+
+      {/* Waveform Visualizer - appears below main canvas when audio is playing */}
+      {toneInstance && (
+        <div className="w-full mb-8" style={{ maxWidth: '1200px' }}>
+          <WaveformVisualizer
+            Tone={toneInstance}
+            isPlaying={isPlaying}
+            color="#a855f7"
+            height={60}
+          />
+        </div>
+      )}
 
       {/* Species Filter Buttons */}
       <div className="flex gap-3 mb-6">
@@ -515,19 +532,19 @@ export default function IrisPage() {
 
       {/* Stats Section */}
       <div className="grid grid-cols-4 gap-6 text-white/70 text-sm mb-8 max-w-4xl w-full">
-        <div className="text-center p-4 bg-white/5 rounded-lg border border-white/10">
+        <div className="card-lift text-center p-4 bg-white/5 rounded-lg border border-white/10">
           <div className="text-white/50 text-xs uppercase tracking-wider mb-2">Observations</div>
           <div className="text-2xl font-light">{data.metadata.observations}</div>
         </div>
-        <div className="text-center p-4 bg-white/5 rounded-lg border border-white/10">
+        <div className="card-lift text-center p-4 bg-white/5 rounded-lg border border-white/10">
           <div className="text-white/50 text-xs uppercase tracking-wider mb-2">Species</div>
           <div className="text-2xl font-light">{data.metadata.species}</div>
         </div>
-        <div className="text-center p-4 bg-white/5 rounded-lg border border-white/10">
+        <div className="card-lift text-center p-4 bg-white/5 rounded-lg border border-white/10">
           <div className="text-white/50 text-xs uppercase tracking-wider mb-2">Features</div>
           <div className="text-2xl font-light">{data.metadata.features}</div>
         </div>
-        <div className="text-center p-4 bg-white/5 rounded-lg border border-white/10">
+        <div className="card-lift text-center p-4 bg-white/5 rounded-lg border border-white/10">
           <div className="text-white/50 text-xs uppercase tracking-wider mb-2">Year</div>
           <div className="text-2xl font-light">{data.metadata.year}</div>
         </div>

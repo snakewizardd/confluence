@@ -1,21 +1,19 @@
 # Confluence
 
-> Where data becomes music. Where numbers reveal rhythm.
+Data sonification platform. Transform datasets into music.
 
-A living philosophical instrument that transforms datasets into sound, demonstrating that statistics and soul are not separate domains but one river with many tributaries.
+## Experience
 
-## What This Is
+- **/** - Portal
+- **/pulse** - Synthetic data as ambient soundscape
+- **/iris** - Fisher's 1936 iris dataset as composition
+- **/about** - Philosophy
 
-Confluence is a data sonification and visualization platform that turns numerical patterns into musical experiences. Fisher's 1936 iris dataset becomes a three-voice composition. Time series data pulses with life. Statistical distributions hum their hidden harmonies.
+## Stack
 
-## Tech Stack
+Next.js 14 · FastAPI · R · Tone.js · Canvas API
 
-- **Frontend:** Next.js 14, React, Tailwind CSS, Tone.js, Canvas API
-- **Backend:** FastAPI (Python), R integration for statistical computing
-- **Database:** PostgreSQL, Redis
-- **Infrastructure:** Docker Compose, GitHub Actions
-
-## Quick Start
+## Run
 
 ```bash
 docker-compose up
@@ -23,53 +21,47 @@ docker-compose up
 
 Visit http://localhost:4000
 
-## Available Pages
+## Deploy
 
-- `/` - Landing page introducing the instruments
-- `/pulse` - Live data visualization with sound synthesis
-- `/iris` - Fisher's iris dataset as interactive music
-- `/about` - Philosophy and methodology behind the project
+**Frontend:** Vercel-ready (see `packages/frontend/vercel.json`)
+**Backend:** Docker-ready (see `docker-compose.yml`)
+
+## Configuration
+
+Copy `.env.example` to `.env` and configure:
+
+```bash
+# Frontend
+NEXT_PUBLIC_API_URL=http://localhost:8000
+
+# Backend
+DATABASE_URL=postgresql+asyncpg://confluence:confluence@db:5432/confluence
+R_SCRIPT_PATH=/app/r_scripts
+```
+
+See `.env.example` for full documentation.
 
 ## Development
 
 ```bash
-# Run with hot reload (local development)
-pnpm dev:local
+# Full stack with Docker
+docker-compose up
 
-# Run full stack in Docker
-pnpm dev
+# Frontend only (requires backend running)
+cd packages/frontend && npm run dev
 
-# Build all packages
-pnpm build
-
-# Run tests
-pnpm test
-
-# View logs
-pnpm logs
+# Backend only
+cd packages/backend && uvicorn confluence.main:app --reload
 ```
 
-## Project Structure
+## Features
 
-```
-confluence/
-├── packages/
-│   ├── frontend/    # Next.js application
-│   ├── backend/     # FastAPI + R services
-│   └── shared/      # Shared types and utilities
-└── docker-compose.yml
-```
+✓ Real-time waveform visualization
+✓ Interactive sound controls with keyboard shortcuts
+✓ Accessibility (WCAG AA, reduced motion support)
+✓ Responsive design
+✓ Error boundaries and graceful degradation
 
-## Philosophy
+## License
 
-Every dataset carries rhythm. Sound reaches us differently than sight—it bypasses analysis and speaks directly to intuition. This project demonstrates that engineering IS philosophy, where the architecture embodies the message.
-
-Read more at `/about` or in `CLAUDE.md`.
-
-## Environment Variables
-
-See `.env.example` files in each package directory for required configuration.
-
----
-
-Built with rigor, harmony, and intention.
+MIT
