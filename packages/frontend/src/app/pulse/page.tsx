@@ -44,7 +44,32 @@ export default function PulsePage() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
   const [canvasDimensions, setCanvasDimensions] = useState({ width: 900, height: 500 });
-  const [tempo] = useState(120); // BPM - can be made dynamic later
+  const [tempo, setTempo] = useState(72);
+  const [scale, setScale] = useState('lydian');
+  const [reverb, setReverb] = useState(35);
+  const [harmonyBlend, setHarmonyBlend] = useState(50);
+  const [showControls, setShowControls] = useState(false);
+  const [showShortcuts, setShowShortcuts] = useState(false);
+  const [allMuted, setAllMuted] = useState(false);
+  const [tempoFlash, setTempoFlash] = useState(false);
+  const [scaleFlash, setScaleFlash] = useState('');
+
+  // Load preferences from localStorage on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedTempo = localStorage.getItem('pulse_tempo');
+      const savedScale = localStorage.getItem('pulse_scale');
+      const savedReverb = localStorage.getItem('pulse_reverb');
+      const savedHarmonyBlend = localStorage.getItem('pulse_harmonyBlend');
+      const savedShowControls = localStorage.getItem('pulse_showControls');
+
+      if (savedTempo) setTempo(Number(savedTempo));
+      if (savedScale) setScale(savedScale);
+      if (savedReverb) setReverb(Number(savedReverb));
+      if (savedHarmonyBlend) setHarmonyBlend(Number(savedHarmonyBlend));
+      if (savedShowControls) setShowControls(savedShowControls === 'true');
+    }
+  }, []);
 
   // Generate data on mount
   useEffect(() => {
@@ -54,6 +79,41 @@ export default function PulsePage() {
     setFlow(f);
     setHarmony(calculateHarmony([g, f]));
   }, []);
+
+  // Apply control changes to sonifier in real-time
+  useEffect(() => {
+    if (sonifierRef.current) {
+      sonifierRef.current.setTempo(tempo);
+      sonifierRef.current.setScale(scale);
+      sonifierRef.current.setReverb(reverb / 100);
+      sonifierRef.current.setHarmonyBlend(harmonyBlend / 100);
+
+      // If playing and tempo changed, restart playback to apply new tempo
+      if (isPlaying && growth.length > 0) {
+        sonifierRef.current.playSeries(growth);
+        if (harmony) {
+          sonifierRef.current.setHarmony(harmony.overall);
+          sonifierRef.current.setMomentum(harmony.momentum);
+          sonifierRef.current.setBalance(harmony.balance);
+        }
+      }
+    }
+
+    // Save to localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('pulse_tempo', tempo.toString());
+      localStorage.setItem('pulse_scale', scale);
+      localStorage.setItem('pulse_reverb', reverb.toString());
+      localStorage.setItem('pulse_harmonyBlend', harmonyBlend.toString());
+    }
+  }, [tempo, scale, reverb, harmonyBlend]);
+
+  // Save control panel state to localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('pulse_showControls', showControls.toString());
+    }
+  }, [showControls]);
 
   // Handle window resize for responsive canvas
   useEffect(() => {
@@ -336,18 +396,77 @@ export default function PulsePage() {
     }
   }, [isPlaying, isInitialized, growth, flow, harmony]);
 
-  // Keyboard handler for spacebar to toggle play/pause
+  // Keyboard shortcuts handler
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.code === 'Space' && e.target === document.body) {
-        e.preventDefault();
-        togglePlay();
+      // Only handle if not typing in an input field
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+
+      switch (e.code) {
+        case 'Space':
+          e.preventDefault();
+          togglePlay();
+          break;
+        case 'Escape':
+          e.preventDefault();
+          sonifierRef.current?.stop();
+          setIsPlaying(false);
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          setTempo(prev => {
+            const newTempo = Math.min(120, prev + 5);
+            flashTempo();
+            return newTempo;
+          });
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          setTempo(prev => {
+            const newTempo = Math.max(40, prev - 5);
+            flashTempo();
+            return newTempo;
+          });
+          break;
+        case 'KeyM':
+          e.preventDefault();
+          toggleMuteAll();
+          break;
+        case 'Slash':
+          if (e.shiftKey) { // ? key
+            e.preventDefault();
+            setShowShortcuts(true);
+          }
+          break;
       }
     };
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [togglePlay]);
+
+  // Flash tempo display when changed
+  const flashTempo = () => {
+    setTempoFlash(true);
+    setTimeout(() => setTempoFlash(false), 300);
+  };
+
+  // Flash scale display when changed
+  const flashScale = (scaleName: string) => {
+    setScaleFlash(scaleName);
+    setTimeout(() => setScaleFlash(''), 1500);
+  };
+
+  // Toggle mute all
+  const toggleMuteAll = () => {
+    const newMuted = !allMuted;
+    setAllMuted(newMuted);
+    if (sonifierRef.current) {
+      sonifierRef.current._config.volume = newMuted ? 0 : 0.6;
+    }
+  };
 
   // Regenerate data
   const regenerate = () => {
@@ -377,17 +496,26 @@ export default function PulsePage() {
           A self-contained meditation on data becoming experience.
         </p>
 
-        {/* Tempo Display */}
-        <div className="mb-2 text-white/50 text-sm font-mono">
-          ♪ {tempo} BPM
+        {/* Tempo Display with flash effect */}
+        <div className={`mb-2 text-white/50 text-sm font-mono transition-all duration-300 ${tempoFlash ? 'scale-125 text-white/90' : ''}`}>
+          ♪ {tempo} BPM {allMuted ? '(muted)' : ''}
         </div>
 
         {/* Info Tooltip */}
         <div className="mb-6 text-white/40 text-xs text-center max-w-lg">
           <span className="inline-block px-3 py-1 bg-white/5 rounded-full border border-white/10">
-            💡 Press spacebar to play/pause • Green wave = growth • Blue wave = flow
+            💡 Press ? for keyboard shortcuts
           </span>
         </div>
+
+        {/* Scale flash overlay */}
+        {scaleFlash && (
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 pointer-events-none">
+            <div className="px-8 py-4 bg-black/80 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl animate-fade-in">
+              <p className="text-white text-2xl font-mono capitalize">{scaleFlash}</p>
+            </div>
+          </div>
+        )}
 
         <canvas
           ref={canvasRef}
@@ -470,6 +598,180 @@ export default function PulsePage() {
           </div>
         </div>
       )}
+
+      {/* Control Panel Toggle Button */}
+      <button
+        onClick={() => setShowControls(!showControls)}
+        className="fixed bottom-6 right-6 z-40 px-4 py-3 bg-black/60 backdrop-blur-xl hover:bg-black/70 text-white rounded-xl transition-all duration-300 border border-white/20 shadow-2xl hover:scale-105 text-sm font-mono"
+        aria-label="Toggle controls"
+      >
+        ⚙️ Controls
+      </button>
+
+      {/* Control Panel */}
+      {showControls && (
+        <div className="fixed bottom-24 right-6 z-40 w-80 bg-black/80 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl p-6 space-y-6 animate-fade-in">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-white font-mono text-lg">Sound Controls</h3>
+            <button
+              onClick={() => setShowControls(false)}
+              className="text-white/50 hover:text-white text-xl leading-none"
+              aria-label="Close controls"
+            >
+              ×
+            </button>
+          </div>
+
+          {/* Tempo Slider */}
+          <div>
+            <label className="block text-white/70 text-sm font-mono mb-2">
+              Tempo: {tempo} BPM
+            </label>
+            <input
+              type="range"
+              min="40"
+              max="120"
+              value={tempo}
+              onChange={(e) => {
+                setTempo(Number(e.target.value));
+                flashTempo();
+              }}
+              className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer slider-thumb"
+            />
+          </div>
+
+          {/* Scale Selector */}
+          <div>
+            <label className="block text-white/70 text-sm font-mono mb-2">
+              Scale
+            </label>
+            <select
+              value={scale}
+              onChange={(e) => {
+                setScale(e.target.value);
+                flashScale(e.target.value);
+              }}
+              className="w-full px-3 py-2 bg-white/10 text-white rounded-lg border border-white/20 font-mono text-sm appearance-none cursor-pointer"
+            >
+              <option value="lydian">Lydian</option>
+              <option value="dorian">Dorian</option>
+              <option value="pentatonic">Pentatonic</option>
+              <option value="minor">Minor</option>
+            </select>
+          </div>
+
+          {/* Reverb Slider */}
+          <div>
+            <label className="block text-white/70 text-sm font-mono mb-2">
+              Reverb: {reverb}%
+            </label>
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={reverb}
+              onChange={(e) => setReverb(Number(e.target.value))}
+              className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer slider-thumb"
+            />
+          </div>
+
+          {/* Harmony Blend Slider */}
+          <div>
+            <label className="block text-white/70 text-sm font-mono mb-2">
+              Harmony Blend: {harmonyBlend}%
+            </label>
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={harmonyBlend}
+              onChange={(e) => setHarmonyBlend(Number(e.target.value))}
+              className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer slider-thumb"
+            />
+            <p className="text-white/40 text-xs mt-1">Controls pad/chord prominence</p>
+          </div>
+        </div>
+      )}
+
+      {/* Keyboard Shortcuts Modal */}
+      {showShortcuts && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          onClick={() => setShowShortcuts(false)}
+        >
+          <div
+            className="bg-black/90 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl p-8 max-w-md animate-fade-in"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-white text-2xl font-mono mb-6">Keyboard Shortcuts</h2>
+            <div className="space-y-3 text-white/80 font-mono text-sm">
+              <div className="flex justify-between items-center">
+                <span className="text-white/50">Spacebar</span>
+                <span>Play / Pause</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-white/50">Escape</span>
+                <span>Stop & Reset</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-white/50">↑ / ↓</span>
+                <span>Tempo ±5 BPM</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-white/50">M</span>
+                <span>Mute / Unmute All</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-white/50">?</span>
+                <span>Show Shortcuts</span>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowShortcuts(false)}
+              className="mt-6 w-full px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-all duration-300 border border-white/20 font-mono text-sm"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      <style jsx>{`
+        .slider-thumb::-webkit-slider-thumb {
+          appearance: none;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          background: linear-gradient(to right, #3b82f6, #8b5cf6);
+          cursor: pointer;
+          box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+
+        .slider-thumb::-moz-range-thumb {
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          background: linear-gradient(to right, #3b82f6, #8b5cf6);
+          cursor: pointer;
+          border: none;
+          box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .animate-fade-in {
+          animation: fade-in 0.3s ease-out;
+        }
+      `}</style>
       </main>
     </>
   );

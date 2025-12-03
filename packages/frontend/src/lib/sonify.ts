@@ -448,6 +448,82 @@ export class DataSonifier {
     return this.isPlaying;
   }
 
+  // === REAL-TIME CONTROL METHODS ===
+
+  /**
+   * Sets the tempo in real-time.
+   * Updates the tempo config which affects playback speed.
+   * To apply changes during playback, restart with playSeries().
+   *
+   * @param bpm - Beats per minute (40-120 recommended)
+   */
+  setTempo(bpm: number): void {
+    this._config.tempo = Math.max(40, Math.min(120, bpm));
+  }
+
+  /**
+   * Sets the musical scale in real-time.
+   * Changes the scale used for note mapping.
+   *
+   * @param scaleName - Name of scale: 'lydian', 'dorian', 'pentatonic', or 'minor'
+   */
+  setScale(scaleName: string): void {
+    const scale = SCALES[scaleName as keyof typeof SCALES];
+    if (scale) {
+      this._config.scale = scale;
+    } else {
+      console.warn(`Unknown scale: ${scaleName}, keeping current scale`);
+    }
+  }
+
+  /**
+   * Sets the reverb wet amount in real-time.
+   * Controls how much reverb is mixed into the signal.
+   *
+   * @param wet - Reverb amount (0.0 to 1.0)
+   */
+  setReverb(wet: number): void {
+    const wetClamped = Math.max(0, Math.min(1, wet));
+    if (this.fx?.reverb) {
+      this.fx.reverb.wet.rampTo(wetClamped, 0.5);
+    }
+  }
+
+  /**
+   * Sets the harmony blend (pad prominence) in real-time.
+   * Controls the volume of the pad synth (chords).
+   *
+   * @param blend - Harmony blend (0.0 to 1.0, where 0 = silent, 1 = loud)
+   */
+  setHarmonyBlend(blend: number): void {
+    const blendClamped = Math.max(0, Math.min(1, blend));
+    if (this.synths?.pad) {
+      // Pad volume range: -30dB (very quiet) to -10dB (prominent)
+      const volume = -30 + blendClamped * 20;
+      this.synths.pad.volume.rampTo(volume, 0.5);
+    }
+  }
+
+  /**
+   * Gets the current tempo.
+   */
+  getTempo(): number {
+    return this._config.tempo;
+  }
+
+  /**
+   * Gets the current scale name.
+   */
+  getScaleName(): string {
+    const { scale } = this._config;
+    for (const [name, intervals] of Object.entries(SCALES)) {
+      if (JSON.stringify(intervals) === JSON.stringify(scale)) {
+        return name;
+      }
+    }
+    return 'custom';
+  }
+
   /**
    * Cleans up all audio resources.
    * Call this when the sonifier is no longer needed.

@@ -77,6 +77,17 @@ export class IrisSonifier {
   private isPlaying = false;
   private currentScale = SCALES.major;
   private intervalId: ReturnType<typeof setInterval> | null = null;
+  private currentTempo = 120;
+  private currentWaves: IrisWave[] = [];
+  private shouldLoop = false;
+
+  // Mute state for each voice
+  private mutedVoices = {
+    sepalLength: false,
+    sepalWidth: false,
+    petalLength: false,
+    petalWidth: false,
+  };
 
   async init(): Promise<boolean> {
     if (typeof window === 'undefined') return false;
@@ -176,7 +187,7 @@ export class IrisSonifier {
     }
   }
 
-  playWaves(waves: IrisWave[], tempo = 120): void {
+  playWaves(waves: IrisWave[], tempo = 120, loop = false): void {
     if (!this.synths || waves.length === 0) {
       console.error('Cannot play: synths not initialized or empty waves');
       return;
@@ -184,16 +195,29 @@ export class IrisSonifier {
 
     this.stop();
 
+    this.currentWaves = waves;
+    this.currentTempo = tempo;
+    this.shouldLoop = loop;
+
     const { sepalLength, sepalWidth, petalLength, petalWidth } = this.synths;
-    const msPerBeat = (60 / tempo) * 1000;
+    const msPerBeat = (60 / this.currentTempo) * 1000;
     const msPerNote = msPerBeat / 2; // 8th notes
 
     let currentIndex = 0;
 
     this.intervalId = setInterval(() => {
-      if (!this.isPlaying || currentIndex >= waves.length) {
-        this.stop();
+      if (!this.isPlaying) {
         return;
+      }
+
+      // Handle end of sequence
+      if (currentIndex >= waves.length) {
+        if (this.shouldLoop) {
+          currentIndex = 0; // Loop back to start
+        } else {
+          this.stop();
+          return;
+        }
       }
 
       const wave = waves[currentIndex];
@@ -201,21 +225,27 @@ export class IrisSonifier {
       // Set scale based on species
       this.setScaleForSpecies(wave.species);
 
-      // Play each feature as a different voice
+      // Play each feature as a different voice (only if not muted)
       // Sepal Length - high melody
-      const slNote = this.valueToNote(wave.sepal_length, 5, this.currentScale);
-      sepalLength.triggerAttackRelease(slNote, '8n', undefined, 0.6);
+      if (!this.mutedVoices.sepalLength) {
+        const slNote = this.valueToNote(wave.sepal_length, 5, this.currentScale);
+        sepalLength.triggerAttackRelease(slNote, '8n', undefined, 0.6);
+      }
 
       // Sepal Width - mid harmony
-      const swNote = this.valueToNote(wave.sepal_width, 4, this.currentScale);
-      sepalWidth.triggerAttackRelease(swNote, '4n', undefined, 0.5);
+      if (!this.mutedVoices.sepalWidth) {
+        const swNote = this.valueToNote(wave.sepal_width, 4, this.currentScale);
+        sepalWidth.triggerAttackRelease(swNote, '4n', undefined, 0.5);
+      }
 
       // Petal Length - bass
-      const plNote = this.valueToNote(wave.petal_length, 2, this.currentScale);
-      petalLength.triggerAttackRelease(plNote, '4n', undefined, 0.7);
+      if (!this.mutedVoices.petalLength) {
+        const plNote = this.valueToNote(wave.petal_length, 2, this.currentScale);
+        petalLength.triggerAttackRelease(plNote, '4n', undefined, 0.7);
+      }
 
       // Petal Width - shimmer texture (occasional)
-      if (currentIndex % 2 === 0) {
+      if (!this.mutedVoices.petalWidth && currentIndex % 2 === 0) {
         const pwNote = this.valueToNote(wave.petal_width, 6, this.currentScale);
         petalWidth.triggerAttackRelease(pwNote, '2n', undefined, 0.3);
       }
@@ -224,7 +254,7 @@ export class IrisSonifier {
     }, msPerNote);
 
     this.isPlaying = true;
-    if (DEBUG) console.log(`Playing ${waves.length} iris observations at ${tempo} BPM`);
+    if (DEBUG) console.log(`Playing ${waves.length} iris observations at ${tempo} BPM (loop: ${loop})`);
   }
 
   stop(): void {
@@ -238,6 +268,90 @@ export class IrisSonifier {
 
   get playing(): boolean {
     return this.isPlaying;
+  }
+
+  // === REAL-TIME CONTROL METHODS ===
+
+  /**
+   * Sets the tempo and restarts playback if currently playing.
+   * @param bpm - Beats per minute (40-120 recommended)
+   */
+  setTempo(bpm: number): void {
+    this.currentTempo = Math.max(40, Math.min(120, bpm));
+    // If currently playing, restart with new tempo
+    if (this.isPlaying && this.currentWaves.length > 0) {
+      this.playWaves(this.currentWaves, this.currentTempo, this.shouldLoop);
+    }
+  }
+
+  /**
+   * Sets the musical scale.
+   * Changes apply to future notes.
+   * @param scaleName - 'major', 'minor', or 'lydian'
+   */
+  setScale(scaleName: string): void {
+    const scale = SCALES[scaleName as keyof typeof SCALES];
+    if (scale) {
+      this.currentScale = scale;
+    } else {
+      console.warn(`Unknown scale: ${scaleName}, keeping current scale`);
+    }
+  }
+
+  /**
+   * Sets the reverb wet amount.
+   * @param wet - Reverb amount (0.0 to 1.0)
+   */
+  setReverb(wet: number): void {
+    const wetClamped = Math.max(0, Math.min(1, wet));
+    if (this.fx?.reverb) {
+      this.fx.reverb.wet.rampTo(wetClamped, 0.5);
+    }
+  }
+
+  /**
+   * Mutes or unmutes a specific voice.
+   * @param voiceName - 'sepalLength', 'sepalWidth', 'petalLength', or 'petalWidth'
+   * @param muted - true to mute, false to unmute
+   */
+  muteVoice(voiceName: string, muted: boolean): void {
+    if (voiceName in this.mutedVoices) {
+      this.mutedVoices[voiceName as keyof typeof this.mutedVoices] = muted;
+    } else {
+      console.warn(`Unknown voice: ${voiceName}`);
+    }
+  }
+
+  /**
+   * Sets the loop mode.
+   * @param loop - true to loop continuously, false to stop at end
+   */
+  setLoop(loop: boolean): void {
+    this.shouldLoop = loop;
+  }
+
+  /**
+   * Gets the current tempo.
+   */
+  getTempo(): number {
+    return this.currentTempo;
+  }
+
+  /**
+   * Gets whether a voice is muted.
+   */
+  isVoiceMuted(voiceName: string): boolean {
+    if (voiceName in this.mutedVoices) {
+      return this.mutedVoices[voiceName as keyof typeof this.mutedVoices];
+    }
+    return false;
+  }
+
+  /**
+   * Gets the loop state.
+   */
+  getLoop(): boolean {
+    return this.shouldLoop;
   }
 
   dispose(): void {
