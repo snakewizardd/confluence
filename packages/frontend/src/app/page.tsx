@@ -14,12 +14,18 @@ export default function Home() {
           Where the universal soul hums through data.
         </p>
 
-        <div className="pt-12">
+        <div className="pt-12 flex gap-4 justify-center">
           <Link
             href="/pulse"
             className="inline-block px-8 py-4 bg-gradient-to-r from-water-500 to-growth-500 text-white rounded-full font-mono text-sm shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
           >
             Experience The Pulse →
+          </Link>
+          <Link
+            href="/iris"
+            className="inline-block px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-mono text-sm shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+          >
+            Iris Sonification 🌸
           </Link>
         </div>
 
