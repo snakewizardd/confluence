@@ -26,10 +26,7 @@ class Settings(BaseSettings):
     # Redis - the ephemeral cache
     REDIS_URL: str = "redis://redis:6379/0"
 
-    # Claude API - the mirror of soul
-    ANTHROPIC_API_KEY: str = ""
-
-    # Data sources - the rivers we drink from
+    # Data sources - the rivers we drink from (optional)
     USDA_API_KEY: str = ""
     NOAA_API_KEY: str = ""
     NASA_API_KEY: str = ""

@@ -28,7 +28,7 @@ labels: bug
 - OS: [e.g., Windows, macOS, Linux]
 - Node version: [e.g., 20.10.0]
 - Docker version: [e.g., 24.0.0]
-- Package affected: [frontend/backend/shared/ai-services]
+- Package affected: [frontend/backend/shared]
 
 ## Logs/Screenshots
 

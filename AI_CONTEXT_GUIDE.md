@@ -52,26 +52,6 @@ When consulting external AI assistants about this project, share these specific 
 - `confluence/compute/` - Where R statistical functions will go
 - `confluence/models/` - Where SQLAlchemy models will go
 
-### 🧠 AI Services (Claude Integration, Meditation, Poetry)
-
-**Core Files:**
-- [packages/ai-services/src/services/claude.ts](packages/ai-services/src/services/claude.ts) - Base Claude service
-- [packages/ai-services/src/services/reflection.ts](packages/ai-services/src/services/reflection.ts) - Meditation generation
-- [packages/ai-services/src/services/poetry.ts](packages/ai-services/src/services/poetry.ts) - Poetry composition
-- [packages/ai-services/src/scripts/meditate.ts](packages/ai-services/src/scripts/meditate.ts) - CLI meditation script
-- [packages/ai-services/src/scripts/compose.ts](packages/ai-services/src/scripts/compose.ts) - CLI poetry script
-
-**Type Definitions:**
-- [packages/shared/src/types/harmony.ts](packages/shared/src/types/harmony.ts) - HarmonyScore type
-- [packages/shared/src/types/data.ts](packages/shared/src/types/data.ts) - TimeSeries type
-
-**What to Explain:**
-- Uses Anthropic SDK with Claude Opus model
-- System prompts emphasize philosophical contemplation
-- ReflectionService takes harmony scores and time series as input
-- PoetryService composes from data patterns
-- All responses should be 2-5 paragraphs, clear but profound
-
 ### 📦 Shared Types & Utilities (Cross-package Development)
 
 **Core Files:**
@@ -85,7 +65,7 @@ When consulting external AI assistants about this project, share these specific 
 **What to Explain:**
 - All types use Zod for runtime validation
 - Utilities are pure functions
-- This package is imported by frontend and ai-services
+- This package is imported by frontend and backend
 - Any changes here affect multiple packages
 
 ### 🐳 Docker & Infrastructure (DevOps, Deployment)
@@ -115,8 +95,6 @@ When consulting external AI assistants about this project, share these specific 
 - `time_series` - Metadata for data streams
 - `time_series_data` - Actual points (indexed by timestamp)
 - `harmony_scores` - System balance measurements
-- `reflections` - AI-generated meditations
-- `poems` - AI-generated poetry
 
 **What to Explain:**
 - JSONB columns for flexible metadata/context
@@ -173,11 +151,6 @@ packages/shared/
 ├── src/types/                → Zod schemas (data, harmony, API)
 ├── src/utils/                → Pure functions (math, time)
 └── src/constants/            → Immutable values
-
-packages/ai-services/
-├── src/services/claude.ts    → Base Claude integration
-├── src/services/reflection.ts → Meditation generation
-└── src/services/poetry.ts    → Poetry composition
 ```
 
 ## Example Prompts for External AI
@@ -193,11 +166,6 @@ packages/ai-services/
 > - [Attach: claude.md, packages/backend/confluence/main.py, packages/shared/src/types/data.ts]
 > - The endpoint should return data matching the TimeSeries schema
 > - Use async/await patterns consistent with the existing code"
-
-### For AI Services:
-> "I want to enhance the meditation generation to include sonification parameters. Context:
-> - [Attach: claude.md, packages/ai-services/src/services/reflection.ts, packages/shared/src/types/harmony.ts]
-> - The meditation should suggest musical parameters based on harmony scores"
 
 ### For Docker Issues:
 > "The backend container won't start. Here's the setup:
