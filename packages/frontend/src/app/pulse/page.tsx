@@ -1,6 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+// The pulse of information, visualized and heard.
+
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { generateGrowth, generateFlow, TimeSeriesPoint } from '@confluence/shared/utils/generators';
 import { calculateHarmony, HarmonyMetrics } from '@confluence/shared/utils/math';
 import { DataSonifier } from '@/lib/sonify';
@@ -49,6 +51,19 @@ export default function PulsePage() {
     setFlow(f);
     setHarmony(calculateHarmony([g, f]));
   }, []);
+
+  // Keyboard handler for spacebar to toggle play/pause
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.code === 'Space' && e.target === document.body) {
+        e.preventDefault();
+        togglePlay();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [togglePlay]);
 
   // Simple perlin-like noise for organic motion
   const noise = (x: number, y: number, t: number): number => {
@@ -297,7 +312,7 @@ export default function PulsePage() {
   }, [growth, flow, harmony, isPlaying]);
 
   // Handle play/pause
-  const togglePlay = async () => {
+  const togglePlay = useCallback(async () => {
     if (!isInitialized) {
       sonifierRef.current = new DataSonifier();
       await sonifierRef.current.init();
@@ -316,7 +331,7 @@ export default function PulsePage() {
       }
       setIsPlaying(true);
     }
-  };
+  }, [isPlaying, isInitialized, growth, flow, harmony]);
 
   // Regenerate data
   const regenerate = () => {
@@ -350,12 +365,15 @@ export default function PulsePage() {
         height={500}
         className="rounded-xl shadow-2xl mb-10 border border-white/10"
         style={{ background: 'linear-gradient(to bottom, #0a0a14, #14141e)' }}
+        role="img"
+        aria-label="Real-time visualization of data harmony, showing animated particles and waves representing growth and flow patterns"
       />
 
       <div className="flex gap-4 mb-8">
         <button
           onClick={togglePlay}
           className="px-8 py-3 bg-gradient-to-r from-blue-500/20 to-purple-500/20 hover:from-blue-500/30 hover:to-purple-500/30 text-white rounded-lg transition-all duration-300 border border-white/20 shadow-lg"
+          aria-label={isPlaying ? 'Pause sonification' : 'Play sonification'}
         >
           {isPlaying ? '⏸ Pause' : '▶ Listen'}
         </button>
@@ -363,6 +381,7 @@ export default function PulsePage() {
         <button
           onClick={regenerate}
           className="px-8 py-3 bg-gradient-to-r from-green-500/20 to-teal-500/20 hover:from-green-500/30 hover:to-teal-500/30 text-white rounded-lg transition-all duration-300 border border-white/20 shadow-lg"
+          aria-label="Regenerate data with new random patterns"
         >
           ↻ Regenerate
         </button>

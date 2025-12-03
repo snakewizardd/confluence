@@ -2,6 +2,9 @@
 // Transform botanical measurements into living music
 // Load Tone.js from CDN to avoid webpack bundling issues
 
+// Debug mode - set to true to enable verbose logging
+const DEBUG = false;
+
 export interface IrisWave {
   index: number;
   t: number;
@@ -43,7 +46,7 @@ function loadToneFromCDN(): Promise<any> {
     script.async = true;
     script.onload = () => {
       if (window.Tone) {
-        console.log('Tone.js loaded from CDN for Iris');
+        if (DEBUG) console.log('Tone.js loaded from CDN for Iris');
         resolve(window.Tone);
       } else {
         reject(new Error('Tone.js failed to load'));
@@ -83,9 +86,7 @@ export class IrisSonifier {
       this.Tone = await loadToneFromCDN();
       const Tone = this.Tone;
 
-      console.log('Iris Tone loaded, starting audio context...');
       await Tone.start();
-      console.log('Iris audio context started:', Tone.context.state);
 
       // Build effects chain (chorus -> delay -> reverb -> compressor -> destination)
       const compressor = new Tone.Compressor({
@@ -148,10 +149,6 @@ export class IrisSonifier {
       }).connect(delay);
 
       this.synths = { sepalLength, sepalWidth, petalLength, petalWidth };
-
-      // Test sound
-      console.log('Playing Iris test note...');
-      sepalLength.triggerAttackRelease('C4', '8n');
 
       return true;
     } catch (e) {
@@ -227,7 +224,7 @@ export class IrisSonifier {
     }, msPerNote);
 
     this.isPlaying = true;
-    console.log(`Playing ${waves.length} iris observations at ${tempo} BPM`);
+    if (DEBUG) console.log(`Playing ${waves.length} iris observations at ${tempo} BPM`);
   }
 
   stop(): void {
@@ -236,7 +233,7 @@ export class IrisSonifier {
       this.intervalId = null;
     }
     this.isPlaying = false;
-    console.log('Iris playback stopped');
+    if (DEBUG) console.log('Iris playback stopped');
   }
 
   get playing(): boolean {

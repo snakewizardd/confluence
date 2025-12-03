@@ -36,8 +36,12 @@ export interface HarmonyMetrics {
 }
 
 /**
- * Calculate harmony between multiple time series
- * This is the SOUL of the project - how we measure unity
+ * Calculate harmony between multiple time series.
+ * This is the SOUL of the project - how we measure unity.
+ *
+ * Harmony is not uniformity—it is coherence amid diversity.
+ * We measure balance, coherence, momentum, and volatility to quantify
+ * how well different data streams flow together as one.
  */
 export function calculateHarmony(
   series: Array<{ value: number }[]>

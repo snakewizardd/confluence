@@ -13,10 +13,11 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     PROJECT_NAME: str = "Confluence"
 
-    # CORS - the boundaries we permit
+    # CORS - the boundaries we permit (localhost development and Docker)
     CORS_ORIGINS: List[str] = [
-        "http://localhost:3000",
-        "http://localhost:8000",
+        "http://localhost:3000",   # Local frontend development
+        "http://localhost:4000",   # Frontend in Docker
+        "http://localhost:8000",   # Backend API
     ]
 
     # Database - the persistence of memory

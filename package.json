@@ -7,14 +7,15 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "pnpm --parallel run dev",
-    "dev:docker": "docker-compose up",
+    "dev": "docker-compose up",
+    "dev:local": "pnpm --parallel run dev",
     "build": "pnpm --filter \"./packages/**\" run build",
+    "logs": "docker-compose logs -f",
+    "clean": "docker-compose down -v && pnpm --recursive run clean && rm -rf node_modules",
     "meditate": "pnpm --filter ai-services run meditate",
     "compose": "pnpm --filter ai-services run compose",
-    "test": "pnpm --recursive run test",
+    "test": "echo 'Tests are prayers - coming soon' && pnpm --recursive run test",
     "lint": "pnpm --recursive run lint",
-    "clean": "pnpm --recursive run clean && rm -rf node_modules",
     "breathe": "docker-compose up --build"
   },
   "engines": {
