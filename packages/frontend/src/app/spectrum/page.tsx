@@ -70,28 +70,30 @@ export default function SpectrumPage() {
     });
 
     // Draw dominant frequencies as vertical lines
-    spectralData.components.forEach((comp, i) => {
-      if (i >= 8) return; // Only show top 8
+    if (Array.isArray(spectralData.components)) {
+      spectralData.components.forEach((comp, i) => {
+        if (i >= 8) return; // Only show top 8
 
-      // Find x position for this frequency
-      const freqIndex = freqs.findIndex((f) => Math.abs(f - comp.frequency) < 0.001);
-      if (freqIndex < 0) return;
+        // Find x position for this frequency
+        const freqIndex = freqs.findIndex((f) => Math.abs(f - comp.frequency) < 0.001);
+        if (freqIndex < 0) return;
 
-      const x = (freqIndex / freqs.length) * width;
+        const x = (freqIndex / freqs.length) * width;
 
-      // Draw vertical line
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(x, height);
-      ctx.lineTo(x, 0);
-      ctx.stroke();
+        // Draw vertical line
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(x, height);
+        ctx.lineTo(x, 0);
+        ctx.stroke();
 
-      // Label
-      ctx.fillStyle = 'white';
-      ctx.font = '10px monospace';
-      ctx.fillText(`${comp.frequency.toFixed(3)} Hz`, x + 4, 15);
-    });
+        // Label
+        ctx.fillStyle = 'white';
+        ctx.font = '10px monospace';
+        ctx.fillText(`${comp.frequency.toFixed(3)} Hz`, x + 4, 15);
+      });
+    }
 
     // Draw axis labels
     ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
@@ -151,7 +153,14 @@ export default function SpectrumPage() {
       const data = await response.json();
 
       if (data.spectral) {
-        setSpectralData(data.spectral);
+        // Ensure components is an array
+        const spectral = {
+          ...data.spectral,
+          components: Array.isArray(data.spectral.components)
+            ? data.spectral.components
+            : []
+        };
+        setSpectralData(spectral);
       } else {
         throw new Error('Invalid response format');
       }
@@ -176,7 +185,14 @@ export default function SpectrumPage() {
 
       const data = await response.json();
       if (data.spectral) {
-        setSpectralData(data.spectral);
+        // Ensure components is an array
+        const spectral = {
+          ...data.spectral,
+          components: Array.isArray(data.spectral.components)
+            ? data.spectral.components
+            : []
+        };
+        setSpectralData(spectral);
         setInputData(''); // Clear input when using demo
       }
     } catch (err) {
@@ -454,28 +470,36 @@ export default function SpectrumPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {spectralData.components.map((comp, i) => (
-                      <tr key={i} className="border-t border-white/10">
-                        <td className="p-3">{comp.frequency.toFixed(4)}</td>
-                        <td className="p-3">
-                          {comp.period === Infinity
-                            ? 'DC'
-                            : `${comp.period.toFixed(2)} ${sampleRate === 1 ? 's' : 'samples'}`}
-                        </td>
-                        <td className="p-3">
-                          <div className="flex items-center gap-2">
-                            <div className="w-24 h-2 bg-white/10 rounded-full overflow-hidden">
-                              <div
-                                className="h-full bg-indigo-400"
-                                style={{ width: `${comp.power_normalized * 100}%` }}
-                              />
+                    {Array.isArray(spectralData.components) ? (
+                      spectralData.components.map((comp, i) => (
+                        <tr key={i} className="border-t border-white/10">
+                          <td className="p-3">{comp.frequency.toFixed(4)}</td>
+                          <td className="p-3">
+                            {comp.period === Infinity
+                              ? 'DC'
+                              : `${comp.period.toFixed(2)} ${sampleRate === 1 ? 's' : 'samples'}`}
+                          </td>
+                          <td className="p-3">
+                            <div className="flex items-center gap-2">
+                              <div className="w-24 h-2 bg-white/10 rounded-full overflow-hidden">
+                                <div
+                                  className="h-full bg-indigo-400"
+                                  style={{ width: `${comp.power_normalized * 100}%` }}
+                                />
+                              </div>
+                              <span>{(comp.power_normalized * 100).toFixed(1)}%</span>
                             </div>
-                            <span>{(comp.power_normalized * 100).toFixed(1)}%</span>
-                          </div>
+                          </td>
+                          <td className="p-3">{comp.phase_degrees.toFixed(1)}°</td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={4} className="p-3 text-center text-white/50">
+                          No spectral components found
                         </td>
-                        <td className="p-3">{comp.phase_degrees.toFixed(1)}°</td>
                       </tr>
-                    ))}
+                    )}
                   </tbody>
                 </table>
               </div>

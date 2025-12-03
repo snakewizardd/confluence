@@ -2,9 +2,16 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function Navigation() {
   const pathname = usePathname();
+  const [mounted, setMounted] = useState(false);
+
+  // Only run pathname checks after hydration to prevent mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-black/30 border-b border-white/10">
@@ -22,7 +29,7 @@ export default function Navigation() {
           <Link
             href="/pulse"
             className={`text-sm font-mono transition-all duration-300 ${
-              pathname === '/pulse'
+              mounted && pathname === '/pulse'
                 ? 'text-white border-b-2 border-water-400'
                 : 'text-white/60 hover:text-white/90'
             }`}
@@ -32,7 +39,7 @@ export default function Navigation() {
           <Link
             href="/iris"
             className={`text-sm font-mono transition-all duration-300 ${
-              pathname === '/iris'
+              mounted && pathname === '/iris'
                 ? 'text-white border-b-2 border-purple-400'
                 : 'text-white/60 hover:text-white/90'
             }`}
@@ -42,7 +49,7 @@ export default function Navigation() {
           <Link
             href="/spectrum"
             className={`text-sm font-mono transition-all duration-300 ${
-              pathname === '/spectrum'
+              mounted && pathname === '/spectrum'
                 ? 'text-white border-b-2 border-indigo-400'
                 : 'text-white/60 hover:text-white/90'
             }`}
@@ -52,7 +59,7 @@ export default function Navigation() {
           <Link
             href="/loom"
             className={`text-sm font-mono transition-all duration-300 ${
-              pathname === '/loom'
+              mounted && pathname === '/loom'
                 ? 'text-white border-b-2 border-purple-400'
                 : 'text-white/60 hover:text-white/90'
             }`}
@@ -62,7 +69,7 @@ export default function Navigation() {
           <Link
             href="/about"
             className={`text-sm font-mono transition-all duration-300 ${
-              pathname === '/about'
+              mounted && pathname === '/about'
                 ? 'text-white border-b-2 border-green-400'
                 : 'text-white/60 hover:text-white/90'
             }`}
