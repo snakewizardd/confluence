@@ -12,7 +12,6 @@ export default function SpectrumPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isInitialized, setIsInitialized] = useState(false);
   const [inputData, setInputData] = useState('');
   const [sampleRate, setSampleRate] = useState(1.0);
   const [duration, setDuration] = useState(8);
@@ -207,21 +206,16 @@ export default function SpectrumPage() {
   const playSonification = async () => {
     if (!spectralData) return;
 
-    if (!isInitialized) {
+    if (!sonifierRef.current) {
       sonifierRef.current = new SpectralSonifier();
-      const success = await sonifierRef.current.init();
-      if (!success) {
-        setError('Failed to initialize audio');
-        return;
-      }
-      setIsInitialized(true);
     }
 
     if (isPlaying) {
-      sonifierRef.current?.stop();
+      sonifierRef.current.stop();
       setIsPlaying(false);
     } else {
-      await sonifierRef.current?.play(spectralData, duration);
+      await sonifierRef.current.init();
+      sonifierRef.current.play(spectralData.components);
       setIsPlaying(true);
 
       // Auto-stop after duration
