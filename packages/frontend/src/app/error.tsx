@@ -13,7 +13,9 @@ export default function Error({
   reset: () => void
 }) {
   useEffect(() => {
-    console.error('Confluence encountered an error:', error)
+    if (process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_DEBUG === 'true') {
+      console.error('Confluence encountered an error:', error)
+    }
   }, [error])
 
   return (

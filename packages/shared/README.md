@@ -2,42 +2,113 @@
 
 The common language - types and utilities shared across the system.
 
-## Philosophy
+## Overview
 
-In a unified system, all parts speak the same language.
-This package contains the vocabulary - the types, utilities, and constants
-that allow frontend, backend, and AI services to understand each other.
+Shared TypeScript package containing types, utilities, and constants used across frontend and backend. Ensures type safety and consistency throughout the monorepo using Zod for runtime validation.
 
 ## Structure
 
 ```
 src/
-├── types/           # The forms - data structures
-│   ├── data.ts      # Data types (time series, geo, stats)
-│   ├── harmony.ts   # Harmony metrics and sonification
-│   └── api.ts       # API communication shapes
-├── utils/           # The tools - shared functions
-│   ├── time.ts      # Time manipulation
-│   ├── math.ts      # Mathematical utilities
-│   └── validation.ts # Zod validation helpers
-└── constants/       # The unchanging truths
+├── types/           # Type definitions and schemas
+│   ├── index.ts         # Re-exports all types
+│   ├── data.ts          # Data structures (time series, geo, stats)
+│   ├── harmony.ts       # Harmony metrics and sonification types
+│   └── api.ts           # API communication shapes
+├── utils/           # Shared utility functions
+│   ├── index.ts         # Re-exports all utilities
+│   ├── time.ts          # Time manipulation helpers
+│   ├── math.ts          # Mathematical utilities
+│   ├── generators.ts    # Data generation functions
+│   └── validation.ts    # Zod validation helpers
+└── constants/       # Shared constants
+    └── index.ts         # System-wide constants and thresholds
 ```
 
 ## Usage
 
+### Importing Types
+
 ```typescript
-import { TimeSeries, calculateHarmony, HARMONY_THRESHOLDS } from '@confluence/shared'
+// Import from main entry point
+import { TimeSeries, HarmonyMetrics } from '@confluence/shared'
 
-// Validate data
-const series = TimeSeriesSchema.parse(rawData)
+// Or import from specific subpaths
+import { TimeSeries } from '@confluence/shared/types'
+import { calculateHarmony } from '@confluence/shared/utils'
+```
 
-// Calculate harmony
+### Using Validation
+
+```typescript
+import { TimeSeriesSchema } from '@confluence/shared/types'
+
+// Runtime validation with Zod
+const validated = TimeSeriesSchema.parse(rawData)
+
+// Safe parsing with error handling
+const result = TimeSeriesSchema.safeParse(rawData)
+if (result.success) {
+  console.log(result.data)
+} else {
+  console.error(result.error)
+}
+```
+
+### Utilities
+
+```typescript
+import { calculateHarmony, formatTime } from '@confluence/shared/utils'
+
+// Use pure functions
 const harmonyScore = calculateHarmony(metrics)
+const formatted = formatTime(timestamp)
+```
+
+## Available Exports
+
+The package provides granular exports for tree-shaking optimization:
+
+- `.` - All exports (types, utils, constants)
+- `./types` - All type definitions
+- `./utils` - All utility functions
+- `./utils/generators` - Data generation utilities
+- `./utils/math` - Mathematical helpers
+- `./utils/time` - Time manipulation functions
+- `./utils/validation` - Zod validation helpers
+- `./constants` - System constants
+
+## Development
+
+```bash
+# Install dependencies
+pnpm install
+
+# Build TypeScript
+pnpm build
+
+# Watch mode for development
+pnpm dev
+
+# Run tests
+pnpm test
+
+# Lint code
+pnpm lint
 ```
 
 ## Design Principles
 
-- All types use Zod for runtime validation
-- Utilities are pure functions
-- Constants are immutable
-- Everything is typed, nothing is assumed
+- **Type Safety**: All types use Zod for runtime validation
+- **Purity**: Utilities are pure functions without side effects
+- **Immutability**: Constants are immutable and frozen
+- **Explicitness**: Everything is typed, nothing is assumed
+- **Tree-shakeable**: Granular exports for optimal bundling
+
+## Dependencies
+
+- **zod**: Runtime type validation and schema definition
+
+---
+
+Built with precision and shared across the confluence.
