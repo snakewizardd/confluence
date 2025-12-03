@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from confluence.config import settings
+from confluence.routers.iris import router as iris_router
 
 # Initialize the heart
 app = FastAPI(
@@ -47,7 +48,10 @@ async def health() -> JSONResponse:
     )
 
 
-# Future routers will branch from here like tributaries:
+# Routers branch from here like tributaries:
+app.include_router(iris_router)
+
+# Future routers:
 # app.include_router(data_router, prefix="/api/data", tags=["data"])
 # app.include_router(ai_router, prefix="/api/ai", tags=["ai"])
 # app.include_router(harmony_router, prefix="/api/harmony", tags=["harmony"])
