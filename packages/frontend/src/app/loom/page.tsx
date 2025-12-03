@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Navigation from '@/components/Navigation';
 import WaveformVisualizer from '@/components/WaveformVisualizer';
-import InstrumentWrapper from '@/components/InstrumentWrapper';
 import { LoomSonifier, LoomData } from '@/lib/loom-sonify';
 
 type SystemType = 'lorenz' | 'automaton' | 'fibonacci' | 'clifford';
@@ -715,11 +714,7 @@ export default function LoomPage() {
   };
 
   return (
-    <InstrumentWrapper
-      instrumentName="LOOM"
-      instrumentSubtitle="Mathematical dreams woven into sound"
-      instrumentId="loom"
-    >
+    <>
       <Navigation />
       <main
         id="main-content"
@@ -907,6 +902,6 @@ export default function LoomPage() {
           </p>
         </div>
       </main>
-    </InstrumentWrapper>
+    </>
   );
 }

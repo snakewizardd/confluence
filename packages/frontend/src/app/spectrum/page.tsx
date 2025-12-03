@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Navigation from '@/components/Navigation';
-import InstrumentWrapper from '@/components/InstrumentWrapper';
 import { SpectralSonifier, SpectralData } from '@/lib/spectral-sonify';
 
 export default function SpectrumPage() {
@@ -273,11 +272,7 @@ export default function SpectrumPage() {
   };
 
   return (
-    <InstrumentWrapper
-      instrumentName="SPECTRUM"
-      instrumentSubtitle="Frequencies revealed, patterns heard"
-      instrumentId="spectrum"
-    >
+    <>
       <Navigation />
       <main
         id="main-content"
@@ -563,6 +558,6 @@ export default function SpectrumPage() {
           </p>
         </div>
       </main>
-    </InstrumentWrapper>
+    </>
   );
 }
