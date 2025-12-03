@@ -11,6 +11,9 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
+# Install R packages - jsonlite for JSON serialization
+RUN R -e "install.packages('jsonlite', repos='https://cran.rstudio.com/')"
+
 WORKDIR /app
 
 # Install Poetry - the dependency weaver
