@@ -204,22 +204,38 @@ export default function SpectrumPage() {
 
   // Play sonification
   const playSonification = async () => {
-    if (!spectralData) return;
+    console.log('[SPECTRUM PAGE] Play clicked');
+    console.log('[SPECTRUM PAGE] spectralData:', spectralData);
+    console.log('[SPECTRUM PAGE] isPlaying:', isPlaying);
+
+    if (!spectralData) {
+      console.error('[SPECTRUM PAGE] No spectral data available');
+      return;
+    }
 
     if (!sonifierRef.current) {
+      console.log('[SPECTRUM PAGE] Creating new SpectralSonifier');
       sonifierRef.current = new SpectralSonifier();
     }
 
     if (isPlaying) {
+      console.log('[SPECTRUM PAGE] Stopping playback');
       sonifierRef.current.stop();
       setIsPlaying(false);
     } else {
+      console.log('[SPECTRUM PAGE] Starting playback');
+      console.log('[SPECTRUM PAGE] Calling init()');
       await sonifierRef.current.init();
+
+      console.log('[SPECTRUM PAGE] Calling play() with components:', spectralData.components);
+      console.log('[SPECTRUM PAGE] Number of components:', spectralData.components?.length);
       sonifierRef.current.play(spectralData.components);
       setIsPlaying(true);
 
       // Auto-stop after duration
+      console.log('[SPECTRUM PAGE] Setting auto-stop timeout for', duration, 'seconds');
       setTimeout(() => {
+        console.log('[SPECTRUM PAGE] Auto-stop triggered');
         setIsPlaying(false);
       }, duration * 1000);
     }
