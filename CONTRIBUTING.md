@@ -19,7 +19,7 @@ Quick start:
 ```bash
 pnpm install
 cp .env.example .env
-# Add your ANTHROPIC_API_KEY to .env
+# Add data source API keys if needed
 pnpm run breathe
 ```
 
@@ -60,7 +60,6 @@ Bad: "Updates"
 - Three.js nature-inspired renderings
 - Tone.js generative music from data
 - Statistical algorithms (R or Python)
-- Claude API prompt engineering
 - Documentation and examples
 
 ## Questions?

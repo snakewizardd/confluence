@@ -44,7 +44,6 @@ services:
     environment:
       DATABASE_URL: postgresql+asyncpg://confluence:confluence@db:5432/confluence
       REDIS_URL: redis://redis:6379/0
-      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
       USDA_API_KEY: ${USDA_API_KEY:-}
       NOAA_API_KEY: ${NOAA_API_KEY:-}
       NASA_API_KEY: ${NASA_API_KEY:-}

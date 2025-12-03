@@ -86,5 +86,4 @@ app.include_router(iris_router)
 
 # Future routers:
 # app.include_router(data_router, prefix="/api/data", tags=["data"])
-# app.include_router(ai_router, prefix="/api/ai", tags=["ai"])
 # app.include_router(harmony_router, prefix="/api/harmony", tags=["harmony"])

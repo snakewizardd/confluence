@@ -7,7 +7,6 @@ A step-by-step guide to bringing the system to life.
 ### Required
 - **Node.js** 18+ and **pnpm** 8+
 - **Docker** and **Docker Compose**
-- **Anthropic API Key** (for Claude integration)
 
 ### Optional (for local backend development without Docker)
 - **Python** 3.11+
@@ -26,16 +25,16 @@ cd confluence
 # 2. Install Node dependencies
 pnpm install
 
-# 3. Set up environment variables
+# 3. Set up environment variables (optional for data sources)
 cp .env.example .env
-# Edit .env and add your ANTHROPIC_API_KEY
+# Edit .env to add USDA_API_KEY, NOAA_API_KEY, NASA_API_KEY if needed
 
 # 4. Start the entire system
 pnpm run breathe
 # or equivalently: docker-compose up --build
 
 # 5. Access the system
-# Frontend: http://localhost:3000
+# Frontend: http://localhost:4000
 # Backend API: http://localhost:8000
 # API Docs: http://localhost:8000/docs
 ```
@@ -84,11 +83,8 @@ cp .env.example .env
 # Backend
 cp packages/backend/.env.example packages/backend/.env
 
-# Frontend
+# Frontend (if needed)
 cp packages/frontend/.env.example packages/frontend/.env
-
-# AI Services
-cp packages/ai-services/.env.example packages/ai-services/.env
 ```
 
 Edit each `.env` file with appropriate values.
@@ -104,22 +100,11 @@ poetry run uvicorn confluence.main:app --reload
 
 # Terminal 2: Frontend
 pnpm --filter @confluence/frontend dev
-
-# Terminal 3: (Optional) Try AI services
-pnpm --filter @confluence/ai-services meditate
 ```
 
-## Getting API Keys
+## Getting API Keys (Optional)
 
-### Anthropic API Key (Required)
-
-1. Go to https://console.anthropic.com/
-2. Create an account or sign in
-3. Navigate to API Keys
-4. Create a new key
-5. Add to `.env`: `ANTHROPIC_API_KEY=sk-ant-...`
-
-### Data Source APIs (Optional)
+### Data Source APIs
 
 - **USDA**: https://www.nass.usda.gov/developer/
 - **NOAA**: https://www.ncdc.noaa.gov/cdo-web/token
@@ -147,16 +132,6 @@ pnpm run test
 
 # Specific package
 pnpm --filter @confluence/shared test
-```
-
-### Try the Philosophy
-
-```bash
-# Generate a meditation
-pnpm run meditate
-
-# Compose poetry
-pnpm run compose
 ```
 
 ## Troubleshooting
@@ -215,9 +190,9 @@ Once the system is running:
 
 1. Read [claude.md](./claude.md) for the philosophical vision
 2. Explore the API at http://localhost:8000/docs
-3. Examine the shared types in `packages/shared/src/types/`
-4. Run `pnpm run meditate` to generate a reflection
-5. Start building features that embody unity
+3. Visit http://localhost:4000 to see the visualizations
+4. Examine the shared types in `packages/shared/src/types/`
+5. Explore data sonification at /pulse and /iris
 
 ## Development Workflow
 
