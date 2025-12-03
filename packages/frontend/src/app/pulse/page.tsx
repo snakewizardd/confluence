@@ -492,7 +492,10 @@ export default function PulsePage() {
     <>
       <Navigation />
       <main id="main-content" className="min-h-screen bg-gray-900 flex flex-col items-center justify-center p-8 pt-24 page-enter">
-        <h1 className="text-4xl font-light text-white/90 mb-3 tracking-wide">The Pulse</h1>
+        <h1 className="text-4xl font-light text-white/90 mb-2 tracking-wide">The Pulse</h1>
+        <p className="text-water-400/60 text-sm font-mono mb-4 tracking-wider">
+          Synthetic rhythms
+        </p>
         <p className="text-white/60 mb-4 text-center max-w-md leading-relaxed">
           Growth and flow, visualized and sonified.
           <br />
@@ -524,7 +527,7 @@ export default function PulsePage() {
           ref={canvasRef}
           width={canvasDimensions.width}
           height={canvasDimensions.height}
-          className="rounded-xl shadow-2xl mb-6 border border-white/10"
+          className="rounded-xl shadow-2xl mb-6 border border-purple-800/30"
           style={{ background: 'linear-gradient(to bottom, #0a0a14, #14141e)' }}
           role="img"
           aria-label="Real-time visualization of data harmony, showing animated particles and waves representing growth and flow patterns"

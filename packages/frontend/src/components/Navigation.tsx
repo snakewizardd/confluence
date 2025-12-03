@@ -40,6 +40,16 @@ export default function Navigation() {
             iris
           </Link>
           <Link
+            href="/spectrum"
+            className={`text-sm font-mono transition-all duration-300 ${
+              pathname === '/spectrum'
+                ? 'text-white border-b-2 border-indigo-400'
+                : 'text-white/60 hover:text-white/90'
+            }`}
+          >
+            spectrum
+          </Link>
+          <Link
             href="/about"
             className={`text-sm font-mono transition-all duration-300 ${
               pathname === '/about'

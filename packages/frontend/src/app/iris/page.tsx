@@ -405,7 +405,7 @@ export default function IrisPage() {
             </p>
             <button
               onClick={useDemoData}
-              className="px-8 py-3 bg-gradient-to-r from-purple-600/20 to-pink-600/20 hover:from-purple-600/30 hover:to-pink-600/30 text-white rounded-lg transition-all duration-300 border border-white/20 shadow-lg"
+              className="px-6 py-3 bg-gradient-to-r from-purple-600/20 to-pink-600/20 hover:from-purple-600/30 hover:to-pink-600/30 text-white rounded-lg transition-all duration-300 border border-white/20 shadow-lg"
             >
               Use Demo Data
             </button>
@@ -432,6 +432,9 @@ export default function IrisPage() {
         <h1 className="text-5xl font-light text-white/90 mb-2 tracking-wide">
           Iris Sonification
         </h1>
+        <p className="text-purple-400/60 text-sm font-mono mb-4 tracking-wider">
+          Botanical frequencies
+        </p>
 
         {/* Data Source Indicator */}
         <div className={`text-xs ${dataSourceColor} mb-4 font-mono`}>
@@ -461,7 +464,7 @@ export default function IrisPage() {
         ref={canvasRef}
         width={1200}
         height={400}
-        className="rounded-xl shadow-2xl mb-6 border border-purple-500/20"
+        className="rounded-xl shadow-2xl mb-6 border border-purple-800/30"
         aria-label="Wave visualization of iris dataset showing sinusoidal patterns for each observation"
         role="img"
       />
@@ -525,7 +528,7 @@ export default function IrisPage() {
       {/* Play/Stop Button */}
       <button
         onClick={togglePlay}
-        className="px-12 py-3 bg-gradient-to-r from-purple-600/20 to-pink-600/20 hover:from-purple-600/30 hover:to-pink-600/30 text-white rounded-lg transition-all duration-300 border border-white/20 shadow-lg mb-8"
+        className="px-6 py-3 bg-gradient-to-r from-purple-600/20 to-pink-600/20 hover:from-purple-600/30 hover:to-pink-600/30 text-white rounded-lg transition-all duration-300 border border-white/20 shadow-lg mb-8"
       >
         {isPlaying ? '⏸ Pause' : '▶ Play Sonification'}
       </button>
