@@ -39,11 +39,44 @@ async def root() -> JSONResponse:
 
 @app.get("/health")
 async def health() -> JSONResponse:
-    """Check the pulse of the system."""
+    """
+    Check the pulse of the system.
+    Returns health status of all services.
+    """
+    # TODO: Add actual service checks (database, redis, R engine)
     return JSONResponse(
         content={
-            "status": "healthy",
-            "heartbeat": True,
+            "status": "ok",
+            "services": {
+                "api": "ok",
+                "r": "ok",  # In future: check R engine availability
+                # "database": "ok",  # When database is added
+                # "redis": "ok",     # When redis is added
+            },
+            "timestamp": "2025-12-03T00:00:00Z",  # TODO: Use actual timestamp
+        }
+    )
+
+
+@app.get("/api/info")
+async def info() -> JSONResponse:
+    """
+    Returns API version and available endpoints.
+    Useful for client discovery and debugging.
+    """
+    return JSONResponse(
+        content={
+            "name": "Confluence API",
+            "version": "0.1.0",
+            "description": "Where rivers meet. The computational heart of unity.",
+            "endpoints": [
+                {"path": "/", "method": "GET", "description": "Root endpoint"},
+                {"path": "/health", "method": "GET", "description": "Health check"},
+                {"path": "/api/info", "method": "GET", "description": "API information"},
+                {"path": "/api/iris", "method": "GET", "description": "Iris dataset operations"},
+                {"path": "/docs", "method": "GET", "description": "OpenAPI documentation"},
+            ],
+            "philosophy": "Data as a living entity - transforming numbers into sight and sound",
         }
     )
 

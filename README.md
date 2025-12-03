@@ -4,6 +4,8 @@
 
 ## What This Is
 
+**Confluence transforms data into sight and sound.**
+
 Confluence is a living philosophical instrument - not an app, not a dashboard - a meditation on unity rendered in code. It demonstrates that statistics and soul, Docker and devotion, CI/CD and consciousness are not separate domains but one river with many tributaries.
 
 ## Philosophy
@@ -25,12 +27,54 @@ confluence/
 └── claude.md           # The vision (read this)
 ```
 
+### Data Flow
+
+```
+┌─────────────────┐
+│   Frontend      │  ← User interaction (visualization, sonification)
+│   (Next.js)     │
+└────────┬────────┘
+         │ HTTP/REST
+         ↓
+┌─────────────────┐
+│   Backend       │  ← API orchestration, data processing
+│   (FastAPI)     │
+└────────┬────────┘
+         │ rpy2
+         ↓
+┌─────────────────┐
+│   R Engine      │  ← Statistical computation, data modeling
+│   (Statistics)  │
+└─────────────────┘
+         ↑
+         │
+    Real Data (USDA, NOAA, NASA)
+```
+
 ### Package Purposes
 
 - **frontend** - Visualizations (D3, Three.js), generative music (Tone.js), reactive UI
 - **backend** - Real data from USDA/NOAA/NASA, statistical computing with R, REST API
 - **shared** - Types, utilities, constants used across the system
 - **ai-services** - Claude API integration for meditation, poetry, philosophical reflection
+
+## Quick Start
+
+The fastest way to experience Confluence:
+
+```bash
+# 1. Clone the repository
+git clone <your-repo>
+cd confluence
+
+# 2. Start the system
+docker-compose up
+
+# 3. Visit the application
+open http://localhost:4000
+```
+
+That's it. The system will breathe to life.
 
 ## Getting Started
 
@@ -39,7 +83,7 @@ confluence/
 - Node.js 18+ and pnpm 8+
 - Docker and Docker Compose
 - Python 3.11+ (if running backend locally)
-- Anthropic API key for Claude
+- Anthropic API key for Claude (optional, for AI-generated reflections)
 
 ### Installation
 
@@ -53,7 +97,7 @@ pnpm install
 2. Set up environment:
 ```bash
 cp .env.example .env
-# Edit .env and add your ANTHROPIC_API_KEY
+# Edit .env and add your ANTHROPIC_API_KEY (optional)
 ```
 
 3. Start the system (Docker):
@@ -73,9 +117,17 @@ pnpm --filter @confluence/backend dev  # requires Python/Poetry setup
 
 ### Access Points
 
-- **Frontend**: http://localhost:3000
+- **Frontend**: http://localhost:4000 (or 3000 if running locally)
 - **Backend API**: http://localhost:8000
 - **API Docs**: http://localhost:8000/docs
+
+### Available Pages
+
+- **/** - Landing page with project philosophy and navigation
+- **/pulse** - Real-time data visualization with sonification (Iris dataset pulse)
+- **/iris** - Interactive Iris dataset explorer (coming soon)
+
+Each page is an exploration of data as a living entity - transforming numbers into sight and sound.
 
 ## Commands
 
@@ -143,6 +195,31 @@ The system seeks balance like a living thing. Harmony scores measure not just "h
 - **AI**: Claude API (Opus) via Anthropic SDK
 - **Infrastructure**: Docker Compose → AWS ECS (future)
 - **CI/CD**: GitHub Actions (the breath of the system)
+
+## Contributing
+
+Contributions to Confluence should honor its philosophical foundation:
+
+1. **Read CLAUDE.md** - Understand the thesis before proposing changes
+2. **Real data only** - No mock data, no placeholders, no lorem ipsum
+3. **Document intention** - Explain not just what, but why
+4. **Test rigorously** - Tests are prayers; they must be sincere
+5. **Commit meaningfully** - Each commit is an offering to the whole
+
+### Code Style
+
+- Functions should be pure where possible
+- Types should be explicit and meaningful
+- Comments should explain intention, not mechanics
+- Naming should reveal purpose
+
+### Pull Request Process
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/your-vision`)
+3. Commit your changes with clear messages
+4. Push to your branch
+5. Open a Pull Request explaining how your changes serve the unity
 
 ## License
 
