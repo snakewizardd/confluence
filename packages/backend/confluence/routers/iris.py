@@ -32,6 +32,65 @@ async def iris_health() -> JSONResponse:
     )
 
 
+@router.get("/test")
+async def test_r_availability() -> JSONResponse:
+    """
+    Test if R is available and can be executed.
+
+    Returns:
+        JSONResponse: R availability status and version information
+    """
+    try:
+        # Try to get R version
+        result = subprocess.run(
+            ["Rscript", "--version"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=False,
+        )
+
+        if result.returncode == 0:
+            # R is available - extract version from stderr (R writes version info there)
+            version_output = result.stderr.strip()
+            # Extract just the version number if possible
+            version = version_output.split('\n')[0] if version_output else "unknown"
+
+            return JSONResponse(
+                content={
+                    "r_available": True,
+                    "version": version,
+                    "status": "R engine operational"
+                }
+            )
+        else:
+            return JSONResponse(
+                content={
+                    "r_available": False,
+                    "version": None,
+                    "status": "R command failed",
+                    "error": result.stderr
+                }
+            )
+
+    except FileNotFoundError:
+        return JSONResponse(
+            content={
+                "r_available": False,
+                "version": None,
+                "status": "Rscript command not found - R may not be installed"
+            }
+        )
+    except Exception as e:
+        return JSONResponse(
+            content={
+                "r_available": False,
+                "version": None,
+                "status": f"Error testing R: {str(e)}"
+            }
+        )
+
+
 @router.get("/data")
 async def get_iris_data() -> JSONResponse:
     """

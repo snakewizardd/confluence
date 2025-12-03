@@ -190,14 +190,86 @@ export default function IrisPage() {
     );
   }
 
+  // Generate demo/synthetic iris data for fallback
+  const generateDemoData = (): IrisData => {
+    const waves: IrisWave[] = [];
+    const species = ['setosa', 'versicolor', 'virginica'];
+
+    // Generate 150 synthetic iris observations (50 per species)
+    for (let i = 0; i < 150; i++) {
+      const speciesIdx = Math.floor(i / 50);
+      const speciesName = species[speciesIdx];
+      const t = i / 149;
+
+      // Synthetic normalized values with species-specific patterns
+      const sepal_length = 0.4 + (speciesIdx * 0.15) + Math.random() * 0.2;
+      const sepal_width = 0.5 - (speciesIdx * 0.1) + Math.random() * 0.2;
+      const petal_length = 0.3 + (speciesIdx * 0.2) + Math.random() * 0.2;
+      const petal_width = 0.2 + (speciesIdx * 0.25) + Math.random() * 0.2;
+
+      // Generate waves (matching R script logic)
+      const wave1 = sepal_length * Math.sin(2 * Math.PI * 1 * t + Math.PI/4);
+      const wave2 = sepal_width * Math.sin(2 * Math.PI * 2 * t + Math.PI/2);
+      const wave3 = petal_length * Math.sin(2 * Math.PI * 3 * t + 3*Math.PI/4);
+      const wave4 = petal_width * Math.sin(2 * Math.PI * 4 * t + Math.PI);
+      const composite_wave = (wave1 + wave2 + wave3 + wave4) / 4;
+
+      waves.push({
+        index: i,
+        t,
+        sepal_length,
+        sepal_width,
+        petal_length,
+        petal_width,
+        species: speciesName,
+        composite_wave,
+        wave1,
+        wave2,
+        wave3,
+        wave4,
+      });
+    }
+
+    return {
+      waves,
+      species_stats: [
+        { species: 'setosa', count: 50, mean_sepal_length: 5.0, mean_sepal_width: 3.4, mean_petal_length: 1.5, mean_petal_width: 0.2 },
+        { species: 'versicolor', count: 50, mean_sepal_length: 5.9, mean_sepal_width: 2.8, mean_petal_length: 4.3, mean_petal_width: 1.3 },
+        { species: 'virginica', count: 50, mean_sepal_length: 6.5, mean_sepal_width: 3.0, mean_petal_length: 5.6, mean_petal_width: 2.0 },
+      ],
+      metadata: {
+        dataset: 'iris (demo)',
+        source: 'Synthetic demo data - backend unavailable',
+        observations: 150,
+        features: 4,
+        species: 3,
+        year: 1936,
+      },
+    };
+  };
+
+  const useDemoData = () => {
+    setData(generateDemoData());
+    setError(null);
+  };
+
   if (error) {
     return (
       <main className="min-h-screen bg-gradient-to-b from-purple-950 to-black flex items-center justify-center">
         <div className="text-center text-red-400 max-w-lg p-8">
           <h2 className="text-2xl mb-4">Error Loading Data</h2>
           <p className="mb-4">{error}</p>
-          <p className="text-sm text-white/50">
+          <p className="text-sm text-white/50 mb-6">
             Make sure the backend is running and R is installed
+          </p>
+          <button
+            onClick={useDemoData}
+            className="px-8 py-3 bg-gradient-to-r from-purple-600/40 to-pink-600/40 hover:from-purple-600/60 hover:to-pink-600/60 text-white rounded-lg transition-all duration-300 border border-white/30 shadow-lg"
+          >
+            Use Demo Data
+          </button>
+          <p className="text-xs text-white/40 mt-4">
+            Demo data is generated client-side for demonstration purposes
           </p>
         </div>
       </main>

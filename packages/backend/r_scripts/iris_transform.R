@@ -2,8 +2,11 @@
 # iris_transform.R - Transform the iris dataset into sinusoidal waves
 # Fisher's 1936 dataset becomes living sound
 
-# Load required library
-library(jsonlite)
+# Suppress warnings and messages for clean JSON output
+options(warn = -1)
+suppressPackageStartupMessages({
+    library(jsonlite)
+})
 
 # Load the sacred iris dataset - Fisher's 1936 contribution to statistics
 data(iris)

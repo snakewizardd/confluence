@@ -16,8 +16,15 @@ class Settings(BaseSettings):
     # CORS - the boundaries we permit (localhost development and Docker)
     CORS_ORIGINS: List[str] = [
         "http://localhost:3000",   # Local frontend development
+        "http://localhost:3001",   # Alternative frontend port
         "http://localhost:4000",   # Frontend in Docker
+        "http://localhost:5173",   # Vite default port
         "http://localhost:8000",   # Backend API
+        "http://localhost:8080",   # Alternative backend port
+        "http://127.0.0.1:3000",   # 127.0.0.1 variants
+        "http://127.0.0.1:3001",
+        "http://127.0.0.1:4000",
+        "http://127.0.0.1:5173",
     ]
 
     # Database - the persistence of memory
