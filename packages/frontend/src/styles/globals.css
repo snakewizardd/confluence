@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* The canvas of perception */
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply text-earth-900;
+  }
+}
+
+/* Utilities for the soul */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

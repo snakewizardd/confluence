@@ -1,0 +1,66 @@
+# Dependencies - the temporary attachments
+node_modules/
+.pnp
+.pnp.js
+
+# Testing - the questions we ask
+coverage/
+*.lcov
+
+# Production - the manifestation
+dist/
+build/
+.next/
+out/
+
+# Environment - the secrets we keep
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.pem
+
+# Debug - the traces we leave
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Python - the serpent's skin
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# IDE - the tools of perception
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Data - the streams we collect
+*.csv
+*.parquet
+data/raw/*
+!data/raw/.gitkeep
+
+# Logs - the river's memory
+logs/
+*.log
+
+# Docker - the vessels
+*.pid
+*.seed
+*.pid.lock
+
+# OS
+Thumbs.db

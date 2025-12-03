@@ -1,0 +1,94 @@
+# CONFLUENCE DOCKER COMPOSE
+# The vessels that contain the living system
+
+services:
+  # PostgreSQL - the persistence of memory
+  db:
+    image: postgres:16-alpine
+    container_name: confluence-db
+    environment:
+      POSTGRES_DB: confluence
+      POSTGRES_USER: confluence
+      POSTGRES_PASSWORD: confluence
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./packages/backend/scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U confluence"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis - the ephemeral cache, the short-term memory
+  redis:
+    image: redis:7-alpine
+    container_name: confluence-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend - the computational heart (FastAPI + Python + R)
+  backend:
+    build:
+      context: .
+      dockerfile: packages/backend/Dockerfile
+    container_name: confluence-backend
+    environment:
+      DATABASE_URL: postgresql+asyncpg://confluence:confluence@db:5432/confluence
+      REDIS_URL: redis://redis:6379/0
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      USDA_API_KEY: ${USDA_API_KEY:-}
+      NOAA_API_KEY: ${NOAA_API_KEY:-}
+      NASA_API_KEY: ${NASA_API_KEY:-}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./packages/backend/confluence:/app/confluence
+      - ./packages/backend/tests:/app/tests
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Frontend - the interface with consciousness (Next.js)
+  frontend:
+    build:
+      context: .
+      dockerfile: packages/frontend/Dockerfile
+    container_name: confluence-frontend
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+      NEXT_PUBLIC_WS_URL: ws://localhost:8000
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./packages/frontend/src:/app/packages/frontend/src
+      - ./packages/shared/src:/app/packages/shared/src
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+    name: confluence_postgres_data
+  redis_data:
+    name: confluence_redis_data
+
+# Networks - the channels of communication
+networks:
+  default:
+    name: confluence_network

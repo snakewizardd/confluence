@@ -1,0 +1,50 @@
+# Node
+node_modules
+npm-debug.log
+.npm
+.pnpm-store
+
+# Next.js
+.next
+out
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env
+venv
+.venv
+*.egg-info
+dist
+build
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Git
+.git
+.gitignore
+
+# Docs
+*.md
+!README.md
+
+# Testing
+coverage
+.pytest_cache
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,33 @@
+{
+  "name": "confluence",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Where rivers meet. Where disciplines dissolve. Where the universal soul hums through data.",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "pnpm --parallel run dev",
+    "dev:docker": "docker-compose up",
+    "build": "pnpm --filter \"./packages/**\" run build",
+    "meditate": "pnpm --filter ai-services run meditate",
+    "compose": "pnpm --filter ai-services run compose",
+    "test": "pnpm --recursive run test",
+    "lint": "pnpm --recursive run lint",
+    "clean": "pnpm --recursive run clean && rm -rf node_modules",
+    "breathe": "docker-compose up --build"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.0",
+  "keywords": [
+    "philosophy",
+    "unity",
+    "data-science",
+    "ai",
+    "generative",
+    "consciousness"
+  ]
+}
