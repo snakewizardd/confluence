@@ -108,7 +108,7 @@ export default function Home() {
 
               <h3 className="text-3xl font-light text-white mb-4">Iris World</h3>
               <p className="text-white/70 leading-relaxed mb-6">
-                Fisher's 1936 botanical dataset transformed into a 150-note composition across three species.
+                Fisher&apos;s 1936 botanical dataset transformed into a 150-note composition across three species.
               </p>
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 rounded-lg border border-white/20 text-sm text-white/80 font-mono">
                 <span>Historic Dataset</span>
@@ -139,11 +139,11 @@ export default function Home() {
       <section className="relative bg-gray-950 py-24 px-6">
         <div className="max-w-4xl mx-auto text-center space-y-8 fade-in-on-scroll">
           <blockquote className="text-2xl md:text-3xl text-white/90 font-light italic leading-relaxed">
-            "Data is not dead. It pulses with the rhythm of the systems that created it.
-            Confluence reveals that hidden music."
+            &ldquo;Data is not dead. It pulses with the rhythm of the systems that created it.
+            Confluence reveals that hidden music.&rdquo;
           </blockquote>
           <Link
-            href="#about"
+            href="/about"
             className="inline-block text-purple-400 hover:text-purple-300 text-sm font-mono transition-colors duration-300 border-b border-purple-400/30 hover:border-purple-300/50"
           >
             About this project →

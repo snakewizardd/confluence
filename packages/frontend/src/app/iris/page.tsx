@@ -84,7 +84,9 @@ export default function IrisPage() {
         setData(irisData);
         setError(null);
       } catch (err) {
-        console.error('Failed to fetch iris data:', err);
+        if (process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_DEBUG === 'true') {
+          console.error('Failed to fetch iris data:', err);
+        }
         setError(err instanceof Error ? err.message : 'Failed to fetch iris data');
       } finally {
         setLoading(false);
@@ -434,7 +436,7 @@ export default function IrisPage() {
         </div>
 
         <p className="text-purple-300/70 mb-4 text-center max-w-2xl leading-relaxed">
-          Fisher's 1936 dataset transformed into sinusoidal waves and sound.
+          Fisher&apos;s 1936 dataset transformed into sinusoidal waves and sound.
           <br />
           Where statistics meets soul. Where data becomes music.
         </p>
@@ -534,10 +536,10 @@ export default function IrisPage() {
       {/* Educational Footer */}
       <div className="max-w-3xl text-center text-white/50 text-sm space-y-2 border-t border-white/10 pt-6">
         <p className="italic">
-          "The use of multiple measurements in taxonomic problems"
+          &ldquo;The use of multiple measurements in taxonomic problems&rdquo;
         </p>
         <p>
-          R.A. Fisher's 1936 iris dataset — 150 observations of iris flowers
+          R.A. Fisher&apos;s 1936 iris dataset — 150 observations of iris flowers
           across three species (setosa, versicolor, virginica) measuring sepal
           and petal dimensions. A foundational dataset in statistics and machine learning.
         </p>

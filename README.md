@@ -1,26 +1,75 @@
 # Confluence
 
-Data visualization and sonification platform.
+> Where data becomes music. Where numbers reveal rhythm.
 
-**Stack:**
-- Frontend: Next.js 14, React, Canvas API, Tone.js
-- Backend: FastAPI, R integration
-- Database: PostgreSQL (ready for expansion)
+A living philosophical instrument that transforms datasets into sound, demonstrating that statistics and soul are not separate domains but one river with many tributaries.
 
-**Features:**
-- Real-time data visualization with physics-based rendering
-- Musical sonification of datasets using Web Audio
-- R statistical computing integration
+## What This Is
 
-**Run:**
+Confluence is a data sonification and visualization platform that turns numerical patterns into musical experiences. Fisher's 1936 iris dataset becomes a three-voice composition. Time series data pulses with life. Statistical distributions hum their hidden harmonies.
+
+## Tech Stack
+
+- **Frontend:** Next.js 14, React, Tailwind CSS, Tone.js, Canvas API
+- **Backend:** FastAPI (Python), R integration for statistical computing
+- **Database:** PostgreSQL, Redis
+- **Infrastructure:** Docker Compose, GitHub Actions
+
+## Quick Start
+
 ```bash
 docker-compose up
 ```
+
 Visit http://localhost:4000
 
-**Pages:**
-- / - Landing
-- /pulse - Live visualization + sound
-- /iris - Fisher's iris dataset as music
+## Available Pages
 
-Built with math, music, and craft.
+- `/` - Landing page introducing the instruments
+- `/pulse` - Live data visualization with sound synthesis
+- `/iris` - Fisher's iris dataset as interactive music
+- `/about` - Philosophy and methodology behind the project
+
+## Development
+
+```bash
+# Run with hot reload (local development)
+pnpm dev:local
+
+# Run full stack in Docker
+pnpm dev
+
+# Build all packages
+pnpm build
+
+# Run tests
+pnpm test
+
+# View logs
+pnpm logs
+```
+
+## Project Structure
+
+```
+confluence/
+├── packages/
+│   ├── frontend/    # Next.js application
+│   ├── backend/     # FastAPI + R services
+│   └── shared/      # Shared types and utilities
+└── docker-compose.yml
+```
+
+## Philosophy
+
+Every dataset carries rhythm. Sound reaches us differently than sight—it bypasses analysis and speaks directly to intuition. This project demonstrates that engineering IS philosophy, where the architecture embodies the message.
+
+Read more at `/about` or in `CLAUDE.md`.
+
+## Environment Variables
+
+See `.env.example` files in each package directory for required configuration.
+
+---
+
+Built with rigor, harmony, and intention.

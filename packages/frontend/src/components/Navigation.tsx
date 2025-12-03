@@ -39,6 +39,16 @@ export default function Navigation() {
           >
             iris
           </Link>
+          <Link
+            href="/about"
+            className={`text-sm font-mono transition-all duration-300 ${
+              pathname === '/about'
+                ? 'text-white border-b-2 border-green-400'
+                : 'text-white/60 hover:text-white/90'
+            }`}
+          >
+            about
+          </Link>
         </div>
       </div>
     </nav>
