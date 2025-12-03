@@ -19,8 +19,20 @@ const crimsonPro = Crimson_Pro({
 })
 
 export const metadata: Metadata = {
-  title: 'Confluence - Where Rivers Meet',
-  description: 'Where disciplines dissolve. Where the universal soul hums through data.',
+  title: 'Confluence | Data Sonification',
+  description: 'Transform datasets into music. A creative engineering project exploring the intersection of data visualization, sound synthesis, and mathematical beauty.',
+  keywords: ['data sonification', 'data visualization', 'sound synthesis', 'generative music', 'creative coding', 'data art'],
+  openGraph: {
+    title: 'Confluence | Data Sonification',
+    description: 'Transform datasets into music. Experience the intersection of data visualization, sound synthesis, and mathematical beauty.',
+    type: 'website',
+    locale: 'en_US',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Confluence | Data Sonification',
+    description: 'Transform datasets into music. Experience the intersection of data visualization, sound synthesis, and mathematical beauty.',
+  },
 }
 
 export default function RootLayout({
