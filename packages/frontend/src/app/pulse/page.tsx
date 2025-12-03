@@ -7,6 +7,7 @@ import { generateGrowth, generateFlow, TimeSeriesPoint } from '@confluence/share
 import { calculateHarmony, HarmonyMetrics } from '@confluence/shared/utils/math';
 import { DataSonifier } from '@/lib/sonify';
 import Navigation from '@/components/Navigation';
+import WaveformVisualizer from '@/components/WaveformVisualizer';
 
 // Particle system for audio-reactive visuals
 interface Particle {
@@ -53,6 +54,7 @@ export default function PulsePage() {
   const [allMuted, setAllMuted] = useState(false);
   const [tempoFlash, setTempoFlash] = useState(false);
   const [scaleFlash, setScaleFlash] = useState('');
+  const [toneInstance, setToneInstance] = useState<any>(null);
 
   // Load preferences from localStorage on mount
   useEffect(() => {
@@ -379,6 +381,7 @@ export default function PulsePage() {
     if (!isInitialized) {
       sonifierRef.current = new DataSonifier();
       await sonifierRef.current.init();
+      setToneInstance(sonifierRef.current.getTone());
       setIsInitialized(true);
     }
 
@@ -488,7 +491,7 @@ export default function PulsePage() {
   return (
     <>
       <Navigation />
-      <main className="min-h-screen bg-gray-900 flex flex-col items-center justify-center p-8 pt-24">
+      <main id="main-content" className="min-h-screen bg-gray-900 flex flex-col items-center justify-center p-8 pt-24 page-enter">
         <h1 className="text-4xl font-light text-white/90 mb-3 tracking-wide">The Pulse</h1>
         <p className="text-white/60 mb-4 text-center max-w-md leading-relaxed">
           Growth and flow, visualized and sonified.
@@ -521,11 +524,23 @@ export default function PulsePage() {
           ref={canvasRef}
           width={canvasDimensions.width}
           height={canvasDimensions.height}
-          className="rounded-xl shadow-2xl mb-10 border border-white/10"
+          className="rounded-xl shadow-2xl mb-6 border border-white/10"
           style={{ background: 'linear-gradient(to bottom, #0a0a14, #14141e)' }}
           role="img"
           aria-label="Real-time visualization of data harmony, showing animated particles and waves representing growth and flow patterns"
         />
+
+        {/* Waveform Visualizer - appears below main canvas when audio is playing */}
+        {toneInstance && (
+          <div className="w-full mb-8" style={{ maxWidth: `${canvasDimensions.width}px` }}>
+            <WaveformVisualizer
+              Tone={toneInstance}
+              isPlaying={isPlaying}
+              color="#60a5fa"
+              height={60}
+            />
+          </div>
+        )}
 
       <div className="flex gap-4 mb-8">
         <button
@@ -547,7 +562,7 @@ export default function PulsePage() {
 
       {harmony && (
         <div className="grid grid-cols-4 gap-6 text-white/70 text-sm">
-          <div className="text-center p-4 bg-white/5 rounded-lg border border-white/10">
+          <div className="card-lift text-center p-4 bg-white/5 rounded-lg border border-white/10">
             <div className="text-white/50 text-xs uppercase tracking-wider mb-2">coherence</div>
             <div className="text-xl font-light">{(harmony.coherence * 100).toFixed(0)}%</div>
             <div className="mt-2 h-1 bg-white/10 rounded-full overflow-hidden">
@@ -558,7 +573,7 @@ export default function PulsePage() {
             </div>
           </div>
 
-          <div className="text-center p-4 bg-white/5 rounded-lg border border-white/10">
+          <div className="card-lift text-center p-4 bg-white/5 rounded-lg border border-white/10">
             <div className="text-white/50 text-xs uppercase tracking-wider mb-2">balance</div>
             <div className="text-xl font-light">{(harmony.balance * 100).toFixed(0)}%</div>
             <div className="mt-2 h-1 bg-white/10 rounded-full overflow-hidden">
@@ -569,7 +584,7 @@ export default function PulsePage() {
             </div>
           </div>
 
-          <div className="text-center p-4 bg-white/5 rounded-lg border border-white/10">
+          <div className="card-lift text-center p-4 bg-white/5 rounded-lg border border-white/10">
             <div className="text-white/50 text-xs uppercase tracking-wider mb-2">momentum</div>
             <div className="text-xl font-light">
               {harmony.momentum > 0 ? '↑' : '↓'} {(Math.abs(harmony.momentum) * 100).toFixed(0)}%
@@ -586,7 +601,7 @@ export default function PulsePage() {
             </div>
           </div>
 
-          <div className="text-center p-4 bg-white/5 rounded-lg border border-white/10">
+          <div className="card-lift text-center p-4 bg-white/5 rounded-lg border border-white/10">
             <div className="text-white/50 text-xs uppercase tracking-wider mb-2">volatility</div>
             <div className="text-xl font-light">{(harmony.volatility * 100).toFixed(0)}%</div>
             <div className="mt-2 h-1 bg-white/10 rounded-full overflow-hidden">

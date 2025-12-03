@@ -525,6 +525,13 @@ export class DataSonifier {
   }
 
   /**
+   * Gets the Tone.js instance for external use (e.g., visualizers).
+   */
+  getTone(): any {
+    return this.Tone;
+  }
+
+  /**
    * Cleans up all audio resources.
    * Call this when the sonifier is no longer needed.
    */

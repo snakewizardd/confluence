@@ -42,7 +42,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} ${crimsonPro.variable}`}>
+      <head>
+        <meta name="theme-color" content="#6b21a8" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+      </head>
       <body className="font-sans">
+        <a href="#main-content" className="skip-to-main">
+          Skip to main content
+        </a>
         {children}
       </body>
     </html>

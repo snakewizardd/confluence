@@ -9,8 +9,8 @@ export default function About() {
       <Navigation />
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-gray-900 via-purple-950/40 to-gray-900">
-        <div className="relative z-10 max-w-4xl mx-auto px-6 py-32 space-y-16 animate-fade-in">
+      <section id="main-content" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-gray-900 via-purple-950/40 to-gray-900 page-enter">
+        <div className="relative z-10 max-w-4xl mx-auto px-6 py-32 space-y-16">
           {/* Header */}
           <div className="text-center space-y-4">
             <h1 className="text-6xl md:text-7xl font-serif text-white tracking-tight">
@@ -78,16 +78,16 @@ export default function About() {
               Tone.js breathes sound into numbers. Each layer serves the whole.
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-4">
-              <div className="px-4 py-3 bg-white/5 rounded-lg border border-white/10 text-center">
+              <div className="card-lift px-4 py-3 bg-white/5 rounded-lg border border-white/10 text-center">
                 <span className="text-white/80 text-sm font-mono">R</span>
               </div>
-              <div className="px-4 py-3 bg-white/5 rounded-lg border border-white/10 text-center">
+              <div className="card-lift px-4 py-3 bg-white/5 rounded-lg border border-white/10 text-center">
                 <span className="text-white/80 text-sm font-mono">FastAPI</span>
               </div>
-              <div className="px-4 py-3 bg-white/5 rounded-lg border border-white/10 text-center">
+              <div className="card-lift px-4 py-3 bg-white/5 rounded-lg border border-white/10 text-center">
                 <span className="text-white/80 text-sm font-mono">Next.js</span>
               </div>
-              <div className="px-4 py-3 bg-white/5 rounded-lg border border-white/10 text-center">
+              <div className="card-lift px-4 py-3 bg-white/5 rounded-lg border border-white/10 text-center">
                 <span className="text-white/80 text-sm font-mono">Tone.js</span>
               </div>
             </div>

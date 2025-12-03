@@ -67,7 +67,116 @@
 button,
 a,
 .interactive {
-  transition-property: opacity, transform, filter, background-color, border-color, color;
+  transition-property: opacity, transform, filter, background-color, border-color, color, box-shadow;
   transition-duration: 300ms;
   transition-timing-function: ease-out;
+}
+
+/* Micro-interactions */
+@layer components {
+  /* Button hover effect - subtle scale */
+  button:not(:disabled):hover {
+    transform: scale(1.02);
+  }
+
+  button:not(:disabled):active {
+    transform: scale(0.98);
+  }
+
+  /* Card hover effect - lift shadow */
+  .card-lift {
+    transition: all 300ms ease-out;
+  }
+
+  .card-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Focus states for accessibility */
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible {
+    outline: 2px solid #8b5cf6;
+    outline-offset: 2px;
+  }
+}
+
+/* Page transitions - fade in */
+@keyframes fade-in-page {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-enter {
+  animation: fade-in-page 0.4s ease-out;
+}
+
+/* Loading state - pulsing animation */
+@keyframes pulse-loading {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.loading-pulse {
+  animation: pulse-loading 1.5s ease-in-out infinite;
+}
+
+/* Skip to main content link (hidden until focused) */
+.skip-to-main {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #8b5cf6;
+  color: white;
+  padding: 8px 16px;
+  text-decoration: none;
+  z-index: 100;
+  transition: top 0.2s;
+}
+
+.skip-to-main:focus {
+  top: 0;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Disable transformations but keep opacity changes */
+  .card-lift:hover {
+    transform: none;
+  }
+
+  button:hover {
+    transform: none;
+  }
+
+  /* Keep essential accessibility features */
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible {
+    outline: 2px solid #8b5cf6;
+    outline-offset: 2px;
+    transition: none;
+  }
 }

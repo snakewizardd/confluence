@@ -354,6 +354,13 @@ export class IrisSonifier {
     return this.shouldLoop;
   }
 
+  /**
+   * Gets the Tone.js instance for external use (e.g., visualizers).
+   */
+  getTone(): any {
+    return this.Tone;
+  }
+
   dispose(): void {
     this.stop();
     if (this.synths) {
