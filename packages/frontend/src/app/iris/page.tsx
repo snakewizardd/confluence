@@ -285,6 +285,11 @@ export default function IrisPage() {
 
   if (!data) return null;
 
+  // Determine data source
+  const isLiveData = data.metadata.source.includes('Fisher');
+  const dataSourceIndicator = isLiveData ? '🟢 Live from R' : '🟡 Demo Mode';
+  const dataSourceColor = isLiveData ? 'text-green-400/70' : 'text-yellow-400/70';
+
   return (
     <>
       <Navigation />
@@ -292,6 +297,12 @@ export default function IrisPage() {
         <h1 className="text-5xl font-light text-white/90 mb-2 tracking-wide">
           Iris Sonification
         </h1>
+
+        {/* Data Source Indicator */}
+        <div className={`text-xs ${dataSourceColor} mb-4 font-mono`}>
+          {dataSourceIndicator}
+        </div>
+
         <p className="text-purple-300/70 mb-8 text-center max-w-2xl leading-relaxed">
           Fisher's 1936 dataset transformed into sinusoidal waves and sound.
           <br />
