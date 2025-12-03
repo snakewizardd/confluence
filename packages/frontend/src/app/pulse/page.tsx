@@ -1,107 +1,174 @@
-'use client'
+'use client';
 
-import { useEffect, useState, useRef } from 'react'
-import { PulseVisualization } from '@/components/pulse/PulseVisualization'
-import { PulseSonification } from '@/components/pulse/PulseSonification'
-import { generatePulseData } from '@/lib/pulse/dataGenerator'
-import { calculateHarmony } from '@confluence/shared'
-import type { PulseData } from '@/lib/pulse/types'
+import { useEffect, useRef, useState } from 'react';
+import { generateGrowth, generateFlow, TimeSeriesPoint } from '@confluence/shared/utils/generators';
+import { calculateHarmony, HarmonyMetrics } from '@confluence/shared/utils/math';
+import { DataSonifier } from '@/lib/sonify';
 
 export default function PulsePage() {
-  const [pulseData, setPulseData] = useState<PulseData | null>(null)
-  const [harmonyScore, setHarmonyScore] = useState<number>(0)
-  const [isPlaying, setIsPlaying] = useState(false)
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const sonifierRef = useRef<DataSonifier | null>(null);
+
+  const [growth, setGrowth] = useState<TimeSeriesPoint[]>([]);
+  const [flow, setFlow] = useState<TimeSeriesPoint[]>([]);
+  const [harmony, setHarmony] = useState<HarmonyMetrics | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // Generate data on mount
   useEffect(() => {
-    const data = generatePulseData()
-    setPulseData(data)
+    const g = generateGrowth(100, 0.08);
+    const f = generateFlow(100, 4, 0.15);
+    setGrowth(g);
+    setFlow(f);
+    setHarmony(calculateHarmony([g, f]));
+  }, []);
 
-    // Calculate harmony from growth and flow patterns
-    const growthValues = data.growth.map(d => d.value)
-    const flowValues = data.flow.map(d => d.value)
-    const combinedMetrics = [...growthValues, ...flowValues]
-    const harmony = calculateHarmony(combinedMetrics)
+  // Draw visualization
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas || growth.length === 0) return;
 
-    setHarmonyScore(harmony)
-  }, [])
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
-  const handlePlayPause = () => {
-    setIsPlaying(!isPlaying)
-  }
+    const { width, height } = canvas;
+    ctx.clearRect(0, 0, width, height);
 
-  if (!pulseData) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-earth-50 via-water-50 to-growth-50">
-        <p className="text-earth-600 font-mono text-sm">The system awakens...</p>
-      </div>
-    )
-  }
+    // Background gradient (earth tones)
+    const gradient = ctx.createLinearGradient(0, 0, 0, height);
+    gradient.addColorStop(0, '#1a1a2e');
+    gradient.addColorStop(1, '#16213e');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, width, height);
+
+    // Draw flow as water (blue wave)
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(100, 180, 255, 0.6)';
+    ctx.lineWidth = 2;
+    flow.forEach((point, i) => {
+      const x = (i / flow.length) * width;
+      const y = height - point.value * height * 0.4 - height * 0.1;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // Draw growth as earth (green/brown rising)
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(120, 200, 120, 0.8)';
+    ctx.lineWidth = 3;
+    growth.forEach((point, i) => {
+      const x = (i / growth.length) * width;
+      const y = height - point.value * height * 0.6 - height * 0.2;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // Harmony indicator (circle in center)
+    if (harmony) {
+      const centerX = width / 2;
+      const centerY = height / 2;
+      const radius = 30 + harmony.overall * 40;
+
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255, 220, 150, ${0.2 + harmony.overall * 0.4})`;
+      ctx.fill();
+
+      // Harmony text
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+      ctx.font = '14px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(`harmony: ${(harmony.overall * 100).toFixed(1)}%`, centerX, centerY + 5);
+    }
+  }, [growth, flow, harmony]);
+
+  // Handle play/pause
+  const togglePlay = async () => {
+    if (!isInitialized) {
+      sonifierRef.current = new DataSonifier();
+      await sonifierRef.current.init();
+      setIsInitialized(true);
+    }
+
+    if (isPlaying) {
+      sonifierRef.current?.stop();
+      setIsPlaying(false);
+    } else {
+      sonifierRef.current?.playSeries(growth, flow);
+      if (harmony) {
+        sonifierRef.current?.setHarmony(harmony.overall);
+      }
+      setIsPlaying(true);
+    }
+  };
+
+  // Regenerate data
+  const regenerate = () => {
+    const g = generateGrowth(100, 0.05 + Math.random() * 0.1);
+    const f = generateFlow(100, 2 + Math.random() * 4, 0.1 + Math.random() * 0.2);
+    setGrowth(g);
+    setFlow(f);
+    setHarmony(calculateHarmony([g, f]));
+
+    if (isPlaying && sonifierRef.current) {
+      sonifierRef.current.playSeries(g, f);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-earth-50 via-water-50 to-growth-50">
-      {/* Header */}
-      <header className="pt-12 pb-8 text-center">
-        <h1 className="text-5xl font-serif text-earth-900 mb-3">The Pulse</h1>
-        <p className="text-lg text-water-700 font-light mb-2">
-          Where data breathes. Where patterns flow.
-        </p>
-        <p className="text-sm text-earth-600 font-mono">
-          A meditation on harmony in living systems
-        </p>
-      </header>
+    <main className="min-h-screen bg-gray-900 flex flex-col items-center justify-center p-8">
+      <h1 className="text-3xl font-light text-white/80 mb-2">The Pulse</h1>
+      <p className="text-white/50 mb-8 text-center max-w-md">
+        Growth and flow, visualized and sonified.
+        A self-contained meditation on data becoming experience.
+      </p>
 
-      {/* Harmony Score Display */}
-      <div className="max-w-4xl mx-auto px-8 mb-8">
-        <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-earth-200">
+      <canvas
+        ref={canvasRef}
+        width={800}
+        height={400}
+        className="rounded-lg shadow-2xl mb-8"
+      />
+
+      <div className="flex gap-4">
+        <button
+          onClick={togglePlay}
+          className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors"
+        >
+          {isPlaying ? '⏸ Pause' : '▶ Listen'}
+        </button>
+
+        <button
+          onClick={regenerate}
+          className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors"
+        >
+          ↻ Regenerate
+        </button>
+      </div>
+
+      {harmony && (
+        <div className="mt-8 grid grid-cols-4 gap-4 text-white/60 text-sm">
           <div className="text-center">
-            <p className="text-sm text-earth-600 mb-2 font-mono">Harmony</p>
-            <div className="relative h-3 bg-earth-100 rounded-full overflow-hidden">
-              <div
-                className="absolute h-full bg-gradient-to-r from-growth-400 to-water-500 transition-all duration-1000 ease-out"
-                style={{ width: `${harmonyScore * 100}%` }}
-              />
-            </div>
-            <p className="text-3xl font-serif text-earth-900 mt-3">
-              {(harmonyScore * 100).toFixed(1)}%
-            </p>
-            <p className="text-xs text-water-600 mt-1">
-              {harmonyScore > 0.8 ? 'Convergence' : harmonyScore > 0.5 ? 'Balance' : 'Emergence'}
-            </p>
+            <div className="text-white/40">coherence</div>
+            <div>{(harmony.coherence * 100).toFixed(0)}%</div>
+          </div>
+          <div className="text-center">
+            <div className="text-white/40">balance</div>
+            <div>{(harmony.balance * 100).toFixed(0)}%</div>
+          </div>
+          <div className="text-center">
+            <div className="text-white/40">momentum</div>
+            <div>{harmony.momentum > 0 ? '↑' : '↓'} {(Math.abs(harmony.momentum) * 100).toFixed(0)}%</div>
+          </div>
+          <div className="text-center">
+            <div className="text-white/40">volatility</div>
+            <div>{(harmony.volatility * 100).toFixed(0)}%</div>
           </div>
         </div>
-      </div>
-
-      {/* Visualization */}
-      <div className="max-w-6xl mx-auto px-8 mb-8">
-        <PulseVisualization
-          growthData={pulseData.growth}
-          flowData={pulseData.flow}
-          harmony={harmonyScore}
-          isPlaying={isPlaying}
-        />
-      </div>
-
-      {/* Sonification Controls */}
-      <div className="max-w-4xl mx-auto px-8 pb-16">
-        <PulseSonification
-          growthData={pulseData.growth}
-          flowData={pulseData.flow}
-          harmony={harmonyScore}
-          isPlaying={isPlaying}
-          onPlayPause={handlePlayPause}
-        />
-      </div>
-
-      {/* Footer - Philosophy */}
-      <footer className="max-w-3xl mx-auto px-8 pb-12 text-center">
-        <p className="text-sm text-earth-500 leading-relaxed">
-          Growth emerges as a sigmoid curve with organic noise.
-          Flow undulates as a sine wave with gentle drift.
-          Their harmony is measured by convergence - how alike they become.
-          Listen. Watch. Feel the unity.
-        </p>
-      </footer>
-    </div>
-  )
+      )}
+    </main>
+  );
 }
