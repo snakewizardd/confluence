@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ['@confluence/shared'],
   experimental: {
-    optimizePackageImports: ['d3', 'three', 'tone'],
+    optimizePackageImports: ['d3', 'three'],
   },
   // The system breathes through these ports
   env: {

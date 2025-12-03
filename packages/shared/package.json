@@ -8,6 +8,10 @@
     ".": "./src/index.ts",
     "./types": "./src/types/index.ts",
     "./utils": "./src/utils/index.ts",
+    "./utils/generators": "./src/utils/generators.ts",
+    "./utils/math": "./src/utils/math.ts",
+    "./utils/time": "./src/utils/time.ts",
+    "./utils/validation": "./src/utils/validation.ts",
     "./constants": "./src/constants/index.ts"
   },
   "scripts": {
