@@ -8,6 +8,7 @@ from fastapi.responses import JSONResponse
 from confluence.config import settings
 from confluence.routers.iris import router as iris_router
 from confluence.routers.spectrum import router as spectrum_router
+from confluence.routers.loom import router as loom_router
 
 # Initialize the heart
 app = FastAPI(
@@ -85,6 +86,7 @@ async def info() -> JSONResponse:
 # Routers branch from here like tributaries:
 app.include_router(iris_router)
 app.include_router(spectrum_router)
+app.include_router(loom_router)
 
 # Future routers:
 # app.include_router(data_router, prefix="/api/data", tags=["data"])
