@@ -8,6 +8,7 @@ Data sonification platform. Transform datasets into music.
 - **/pulse** - Synthetic data as ambient soundscape
 - **/iris** - Fisher's 1936 iris dataset as composition
 - **/spectrum** - FFT-based spectral sonification revealing hidden frequencies
+- **/loom** - Generative mathematical sonification (Lorenz, Automaton, Fibonacci, Clifford)
 - **/about** - Philosophy
 
 ## Stack

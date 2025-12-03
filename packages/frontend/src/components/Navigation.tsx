@@ -50,6 +50,16 @@ export default function Navigation() {
             spectrum
           </Link>
           <Link
+            href="/loom"
+            className={`text-sm font-mono transition-all duration-300 ${
+              pathname === '/loom'
+                ? 'text-white border-b-2 border-purple-400'
+                : 'text-white/60 hover:text-white/90'
+            }`}
+          >
+            loom
+          </Link>
+          <Link
             href="/about"
             className={`text-sm font-mono transition-all duration-300 ${
               pathname === '/about'
