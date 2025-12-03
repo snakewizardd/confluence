@@ -30,7 +30,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} ${crimsonPro.variable}`}>
-      <body className="font-sans antialiased bg-gradient-to-br from-earth-50 via-water-50 to-growth-50">
+      <body className="font-sans">
         {children}
       </body>
     </html>

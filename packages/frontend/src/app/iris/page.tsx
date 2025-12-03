@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { IrisSonifier, IrisWave } from '@/lib/iris-sonify';
+import Navigation from '@/components/Navigation';
 
 interface IrisData {
   waves: IrisWave[];
@@ -181,12 +182,15 @@ export default function IrisPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-gradient-to-b from-purple-950 to-black flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-purple-400 mx-auto mb-4"></div>
-          <p className="text-white/70 text-lg">Loading Iris data from R...</p>
-        </div>
-      </main>
+      <>
+        <Navigation />
+        <main className="min-h-screen bg-gradient-to-b from-purple-950 to-black flex items-center justify-center pt-24">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-purple-400 mx-auto mb-4"></div>
+            <p className="text-white/70 text-lg">Loading Iris data from R...</p>
+          </div>
+        </main>
+      </>
     );
   }
 
@@ -255,39 +259,44 @@ export default function IrisPage() {
 
   if (error) {
     return (
-      <main className="min-h-screen bg-gradient-to-b from-purple-950 to-black flex items-center justify-center">
-        <div className="text-center text-red-400 max-w-lg p-8">
-          <h2 className="text-2xl mb-4">Error Loading Data</h2>
-          <p className="mb-4">{error}</p>
-          <p className="text-sm text-white/50 mb-6">
-            Make sure the backend is running and R is installed
-          </p>
-          <button
-            onClick={useDemoData}
-            className="px-8 py-3 bg-gradient-to-r from-purple-600/40 to-pink-600/40 hover:from-purple-600/60 hover:to-pink-600/60 text-white rounded-lg transition-all duration-300 border border-white/30 shadow-lg"
-          >
-            Use Demo Data
-          </button>
-          <p className="text-xs text-white/40 mt-4">
-            Demo data is generated client-side for demonstration purposes
-          </p>
-        </div>
-      </main>
+      <>
+        <Navigation />
+        <main className="min-h-screen bg-gradient-to-b from-purple-950 to-black flex items-center justify-center pt-24">
+          <div className="text-center text-red-400 max-w-lg p-8">
+            <h2 className="text-2xl mb-4">Error Loading Data</h2>
+            <p className="mb-4">{error}</p>
+            <p className="text-sm text-white/50 mb-6">
+              Make sure the backend is running and R is installed
+            </p>
+            <button
+              onClick={useDemoData}
+              className="px-8 py-3 bg-gradient-to-r from-purple-600/20 to-pink-600/20 hover:from-purple-600/30 hover:to-pink-600/30 text-white rounded-lg transition-all duration-300 border border-white/20 shadow-lg"
+            >
+              Use Demo Data
+            </button>
+            <p className="text-xs text-white/40 mt-4">
+              Demo data is generated client-side for demonstration purposes
+            </p>
+          </div>
+        </main>
+      </>
     );
   }
 
   if (!data) return null;
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-purple-950 to-black flex flex-col items-center justify-center p-8">
-      <h1 className="text-5xl font-light text-white/90 mb-2 tracking-wide">
-        Iris Sonification
-      </h1>
-      <p className="text-purple-300/70 mb-8 text-center max-w-2xl leading-relaxed">
-        Fisher's 1936 dataset transformed into sinusoidal waves and sound.
-        <br />
-        Where statistics meets soul. Where data becomes music.
-      </p>
+    <>
+      <Navigation />
+      <main className="min-h-screen bg-gradient-to-b from-purple-950 to-black flex flex-col items-center justify-center p-8 pt-24">
+        <h1 className="text-5xl font-light text-white/90 mb-2 tracking-wide">
+          Iris Sonification
+        </h1>
+        <p className="text-purple-300/70 mb-8 text-center max-w-2xl leading-relaxed">
+          Fisher's 1936 dataset transformed into sinusoidal waves and sound.
+          <br />
+          Where statistics meets soul. Where data becomes music.
+        </p>
 
       {/* Canvas Visualization */}
       <canvas
@@ -344,9 +353,9 @@ export default function IrisPage() {
       {/* Play/Stop Button */}
       <button
         onClick={togglePlay}
-        className="px-12 py-4 bg-gradient-to-r from-purple-600/30 to-pink-600/30 hover:from-purple-600/40 hover:to-pink-600/40 text-white text-lg rounded-lg transition-all duration-300 border border-white/20 shadow-lg mb-8"
+        className="px-12 py-3 bg-gradient-to-r from-purple-600/20 to-pink-600/20 hover:from-purple-600/30 hover:to-pink-600/30 text-white rounded-lg transition-all duration-300 border border-white/20 shadow-lg mb-8"
       >
-        {isPlaying ? '⏹ Stop' : '▶ Play Sonification'}
+        {isPlaying ? '⏸ Pause' : '▶ Play Sonification'}
       </button>
 
       {/* Stats Section */}
@@ -383,6 +392,7 @@ export default function IrisPage() {
           Each species plays in a different musical scale: setosa (major), versicolor (minor), virginica (lydian)
         </p>
       </div>
-    </main>
+      </main>
+    </>
   );
 }

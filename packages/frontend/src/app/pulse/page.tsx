@@ -6,6 +6,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { generateGrowth, generateFlow, TimeSeriesPoint } from '@confluence/shared/utils/generators';
 import { calculateHarmony, HarmonyMetrics } from '@confluence/shared/utils/math';
 import { DataSonifier } from '@/lib/sonify';
+import Navigation from '@/components/Navigation';
 
 // Particle system for audio-reactive visuals
 interface Particle {
@@ -42,6 +43,8 @@ export default function PulsePage() {
   const [harmony, setHarmony] = useState<HarmonyMetrics | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [canvasDimensions, setCanvasDimensions] = useState({ width: 900, height: 500 });
+  const [tempo] = useState(120); // BPM - can be made dynamic later
 
   // Generate data on mount
   useEffect(() => {
@@ -52,18 +55,18 @@ export default function PulsePage() {
     setHarmony(calculateHarmony([g, f]));
   }, []);
 
-  // Keyboard handler for spacebar to toggle play/pause
+  // Handle window resize for responsive canvas
   useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.code === 'Space' && e.target === document.body) {
-        e.preventDefault();
-        togglePlay();
-      }
+    const handleResize = () => {
+      const maxWidth = Math.min(window.innerWidth - 64, 1200);
+      const height = Math.min(window.innerHeight * 0.5, 500);
+      setCanvasDimensions({ width: maxWidth, height });
     };
 
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [togglePlay]);
+    handleResize(); // Set initial size
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Simple perlin-like noise for organic motion
   const noise = (x: number, y: number, t: number): number => {
@@ -333,6 +336,19 @@ export default function PulsePage() {
     }
   }, [isPlaying, isInitialized, growth, flow, harmony]);
 
+  // Keyboard handler for spacebar to toggle play/pause
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.code === 'Space' && e.target === document.body) {
+        e.preventDefault();
+        togglePlay();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [togglePlay]);
+
   // Regenerate data
   const regenerate = () => {
     const g = generateGrowth(100, 0.05 + Math.random() * 0.1);
@@ -351,23 +367,37 @@ export default function PulsePage() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-900 flex flex-col items-center justify-center p-8">
-      <h1 className="text-4xl font-light text-white/90 mb-3 tracking-wide">The Pulse</h1>
-      <p className="text-white/60 mb-10 text-center max-w-md leading-relaxed">
-        Growth and flow, visualized and sonified.
-        <br />
-        A self-contained meditation on data becoming experience.
-      </p>
+    <>
+      <Navigation />
+      <main className="min-h-screen bg-gray-900 flex flex-col items-center justify-center p-8 pt-24">
+        <h1 className="text-4xl font-light text-white/90 mb-3 tracking-wide">The Pulse</h1>
+        <p className="text-white/60 mb-4 text-center max-w-md leading-relaxed">
+          Growth and flow, visualized and sonified.
+          <br />
+          A self-contained meditation on data becoming experience.
+        </p>
 
-      <canvas
-        ref={canvasRef}
-        width={900}
-        height={500}
-        className="rounded-xl shadow-2xl mb-10 border border-white/10"
-        style={{ background: 'linear-gradient(to bottom, #0a0a14, #14141e)' }}
-        role="img"
-        aria-label="Real-time visualization of data harmony, showing animated particles and waves representing growth and flow patterns"
-      />
+        {/* Tempo Display */}
+        <div className="mb-2 text-white/50 text-sm font-mono">
+          ♪ {tempo} BPM
+        </div>
+
+        {/* Info Tooltip */}
+        <div className="mb-6 text-white/40 text-xs text-center max-w-lg">
+          <span className="inline-block px-3 py-1 bg-white/5 rounded-full border border-white/10">
+            💡 Press spacebar to play/pause • Green wave = growth • Blue wave = flow
+          </span>
+        </div>
+
+        <canvas
+          ref={canvasRef}
+          width={canvasDimensions.width}
+          height={canvasDimensions.height}
+          className="rounded-xl shadow-2xl mb-10 border border-white/10"
+          style={{ background: 'linear-gradient(to bottom, #0a0a14, #14141e)' }}
+          role="img"
+          aria-label="Real-time visualization of data harmony, showing animated particles and waves representing growth and flow patterns"
+        />
 
       <div className="flex gap-4 mb-8">
         <button
@@ -440,6 +470,7 @@ export default function PulsePage() {
           </div>
         </div>
       )}
-    </main>
+      </main>
+    </>
   );
 }

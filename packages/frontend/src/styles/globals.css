@@ -9,7 +9,7 @@
   }
 
   body {
-    @apply text-earth-900;
+    @apply bg-gray-900 text-white antialiased;
   }
 }
 
@@ -63,9 +63,11 @@
   animation: drift 10s ease-in-out infinite;
 }
 
-/* Smooth transitions for all interactive elements */
-* {
-  transition-property: opacity, transform, filter;
+/* Smooth transitions for interactive elements */
+button,
+a,
+.interactive {
+  transition-property: opacity, transform, filter, background-color, border-color, color;
   transition-duration: 300ms;
   transition-timing-function: ease-out;
 }
